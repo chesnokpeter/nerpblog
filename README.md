@@ -15,6 +15,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - [ ] tg instants view
 - [ ] complete function tg bot
 - [ ] complete PWA
+- [ ] ***deploy!***
 ---
 ### install 
 1. `git clone https://github.com/chesnokpeter/nerpblog.git`
