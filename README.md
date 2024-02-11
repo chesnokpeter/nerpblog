@@ -15,6 +15,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - [ ] tg instants view
 - [ ] complete function tg bot
 - [ ] complete PWA
+- [ ] admin panel
 - [ ] ***deploy!***
 ---
 ### install 
