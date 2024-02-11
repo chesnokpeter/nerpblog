@@ -1,0 +1,20 @@
+{
+  "name": "nerpblog",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd nerpblog/frontend && vite --port 9002",
+    "build": "cd nerpblog/frontend && vite build",
+    "preview": "cd nerpblog/frontend && vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.3",
+    "sass": "^1.70.0",
+    "vite": "^5.0.11"
+  }
+}
