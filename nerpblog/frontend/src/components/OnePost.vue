@@ -50,8 +50,7 @@ export default {
         return {
             likeNum: this.likes,
             isClick: false,
-            afterClick: false,
-            // linkIconLike: ''
+            afterClick: false
         }
     },
     methods: {
@@ -127,6 +126,7 @@ export default {
 
     .author {
         color: #5383FF;
+        padding-left: 20px;
     }
 
     .like {

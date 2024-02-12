@@ -11,11 +11,12 @@
                 {{ likeNum }}
                 <img :src="`http://192.168.93.33:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
             </button>
-            <div class="nerpa"><div class="author">{{ author }}</div>
+            <div class="date">{{ post.date }}</div>
+            <div class="nerpa"><div class="author">{{ post.username }}</div>
             </div>
         </div>
         <div v-html="post.htmltext"></div>
-        <a class="opentg" :href="botlink">открыть в боте</a>
+        <a class="opentg" :href="post.botlink">открыть в боте</a>
     </div>
 </template>
 
@@ -43,23 +44,22 @@ export default {
             isClick: false,
             afterClick: false,
             likeNum: 0,
-            notLoaded: true,
-            author: '',
-            botlink: ''
+            notLoaded: true
         }
     }, 
     async mounted() {
         this.post = await getOnePost(this.id)
-        this.notLoaded = false
-        this.likeNum = this.post.likes
-        this.author = this.post.username
-        this.botlink = this.post.botlink
-        if (localStorage.getItem("likeList")) {
-            if (JSON.parse(localStorage.getItem('likeList')).includes(this.id)) {
-                this.isClick = false; 
-                this.afterClick = true;
-            }
+        if (this.post) {
+            this.notLoaded = false
+            this.likeNum = this.post.likes
+            if (localStorage.getItem("likeList")) {
+                if (JSON.parse(localStorage.getItem('likeList')).includes(this.id)) {
+                    this.isClick = false; 
+                    this.afterClick = true;
+                }
+            }            
         }
+
     },
     methods: {
         async handleLikeBtn(event) {
@@ -129,6 +129,7 @@ export default {
         justify-content: space-between;
         width: 100%;
         align-items: center;
+        gap: 10px;
     }
 
     .nerpa {
@@ -180,7 +181,7 @@ export default {
     .post {
         display: flex;
         max-width: 400px;
-        padding: 12px;
+        padding: 10px;
         flex-direction: column;
         align-items: center;
         gap: 10px;
@@ -194,6 +195,7 @@ export default {
         line-height: normal;
         word-wrap:break-word;
         padding-top: 0;
+
         &.notLoaded {
             display: none;
         }
