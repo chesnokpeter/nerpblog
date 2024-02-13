@@ -3,6 +3,7 @@ export default function getOnePost(id) {
         .then(response => response.json())
         .then(response => {
             if (response.htmltext) {
+                response.username = response.username.length > 12 ? response.username.substring(0, 12) + '...' : response.username;
                 response.htmltext = response.htmltext.replace(/\n/g, "<br>")
                 response.date = new Date(response.date); 
                 let formattedDate = response.date.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}); 

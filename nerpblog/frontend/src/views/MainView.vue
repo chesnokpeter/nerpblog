@@ -18,7 +18,7 @@
         },
         data() {
             return {
-                posts: [],
+                posts: []
             }
         },
         async mounted() {
@@ -45,7 +45,6 @@
 </script>
 
 <style scoped>
-
     .list {
         display: flex;
         max-width: 400px;

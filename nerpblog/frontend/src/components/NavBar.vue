@@ -6,8 +6,6 @@
         <div class="sep">/</div>
         <router-link  @click="bold('about')"  to="/about" id="about">about</router-link>
     </div>
-    
-
 </template>
 
 <script>
@@ -62,12 +60,15 @@ export default {
         justify-content: center;
         align-items: flex-start;
         gap: 10px;
+        margin-top: -10px;
+        margin-bottom: -10px;
+        padding: 10px 0;
+
         &.fixed {
             position: sticky;
             top: 0;
             background-color: #121212;
             width: 100%;
-            padding: 10px 0;
         }
     }
     a, .sep {
@@ -78,8 +79,6 @@ export default {
         font-weight: 700;
         line-height: normal;
         text-decoration: none;
-
-
     }
 
     a:hover {

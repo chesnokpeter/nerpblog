@@ -1,7 +1,7 @@
 <template>
     <div class="post">
-        <router-link :to="{ name: 'post', params: { id: id }}" class="title">{{ title }}</router-link>
-        <div v-html="text"></div>
+        <router-link :to="{ name: 'post', params: { id: id }}" class="link-title">{{ title }}</router-link>
+        <router-link :to="{ name: 'post', params: { id: id }}" class="link-text"><p v-html="text" style="margin: 0;"></p></router-link>
         <div class="bott">
             <button 
                 id="likeBtn" 
@@ -11,7 +11,7 @@
                 {{ likeNum }}
                 <img :src="`http://192.168.93.33:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
             </button>
-                <div class="nerpa"><div class="author">{{ author }}</div>
+                <div class="nerpa">нерпа_<div class="author">{{ author }}</div>
             </div>
         </div>
     </div>
@@ -102,9 +102,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-    .title:hover {
+    .openpost {
+        color: #5383FF;
+    }
+    .link-title:hover {
         text-decoration: underline;
+        background-color: #000;
+    }
+
+    .link-text:hover {
         background-color: #000;
     }
 
@@ -117,6 +123,7 @@ export default {
 
     .nerpa {
         display: flex;
+        padding-left: 20px;
     }
 
     a {
@@ -126,7 +133,7 @@ export default {
 
     .author {
         color: #5383FF;
-        padding-left: 20px;
+        
     }
 
     .like {

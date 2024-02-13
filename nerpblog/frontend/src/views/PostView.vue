@@ -17,6 +17,7 @@
         </div>
         <div v-html="post.htmltext"></div>
         <a class="opentg" :href="post.botlink">открыть в боте</a>
+        <div class="comments">// комментов пока нету //</div>
     </div>
 </template>
 
@@ -103,6 +104,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .comments {
+        color: #666;
+    }
+
     a {
         text-decoration: none;
     }
