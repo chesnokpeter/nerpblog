@@ -11,7 +11,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - postgresql
 ### future features
 - [x] complete /prog, /about
-- [ ] photo in post
+- [ ] photo in post (support in the database and bot, without frontend)
 - [ ] docker container
 - [ ] comments via tg bot
 - [ ] tg instants view
