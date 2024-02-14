@@ -4,7 +4,7 @@ sys.path.append('../nerpblog')
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher, Router, types
+from aiogram import Bot, Dispatcher, Router, types, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, CommandObject
 from aiogram.types import Message, ContentType, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -104,7 +104,6 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
                 ]
             ]
         await callback.message.answer('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
-
     else:
         await callback.answer()
 
@@ -141,6 +140,14 @@ async def post_overview_handler(message: types.Message, state: FSMContext) -> No
         await message.answer(f'<b>Название:</b> {data["title"]}\n{data["html"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
     else:
         pass
+
+@dp.message(F.photo)
+async def send_to_admin(message: types.Message):
+    print(message.photo)
+    for photo in message.photo:
+        print(photo)
+        await bot.send_photo(chat_id=message.chat.id, photo=photo.file_id)
+
 
 async def main() -> None:
     global bot

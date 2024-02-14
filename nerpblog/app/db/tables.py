@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, List, Union
 from datetime import datetime
 
-from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime
+from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
 from nerpblog.app.models import PostModel, UserModel
@@ -33,6 +33,7 @@ class POST(Base):
     id: Mapped[int] = mapped_column(Integer(), unique=True, primary_key=True, autoincrement=True, nullable=False)
     htmltext: Mapped[str] = mapped_column(String(), nullable=False)
     title: Mapped[str] = mapped_column(String(), nullable=False, default='Стандартный заголовок')
+    media: Mapped[Union[List[str], None]] = mapped_column(ARRAY(String()), nullable=True)
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
@@ -41,10 +42,9 @@ class POST(Base):
             id = self.id,
             htmltext = self.htmltext,
             title = self.title,
+            media = self.media,
             date = self.date,
             likes = self.likes,
             userid = self.userid
         )
-
-
 

@@ -5,3 +5,5 @@ tests
 dist
 .ps1
 .bash
+alembic
+alembic.ini
