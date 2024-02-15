@@ -16,6 +16,9 @@
             </div>
         </div>
         <div v-html="post.htmltext"></div>
+        <div class="media" v-if="post.media" v-for="i in post.media">
+            <img :src="`http://192.168.93.33:9001/media/photo/${i}`" alt="" class="img">
+        </div>
         <a class="opentg" :href="post.botlink">открыть в боте</a>
         <div class="comments">// комментов пока нету //</div>
     </div>
@@ -104,6 +107,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .img {
+        max-width: 400px;
+        max-height: 400px;
+    }
+
     .comments {
         color: #666;
     }

@@ -15,7 +15,7 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
         await state.clear()
         await callback.answer()
         await state.set_state(Post.text)
-        await callback.message.edit_text(f'''Теперь отправь текст поста, <b>форматирование</b> <i><b>использовать</b></i> <u>можно</u>\nНо пока что картинки использовать нельзя😢''', inline_message_id=callback.inline_message_id,  parse_mode=ParseMode.HTML)
+        await callback.message.edit_text(f'''Отправь текст поста, <b>форматирование</b> <i><b>использовать</b></i> <u>можно</u>, фотографии <b><u>тоже</u></b>''', inline_message_id=callback.inline_message_id,  parse_mode=ParseMode.HTML)
     elif callback.data == 'menu':
         await state.clear()
         await callback.answer()

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from nerpblog.app.routing.api import apiRouter
 from nerpblog.app.routing.front import frontRouter
+from nerpblog.app.routing.media import mediaRouter
 
 app = FastAPI(title='nerpblog api')
 
@@ -25,7 +26,7 @@ app.mount('/icons/like/', StaticFiles(directory='nerpblog/public/likes/'))
 # app.mount("/assets", StaticFiles(directory="nerpblog/app/static/dist/assets"), name="assets")
 app.include_router(apiRouter)
 app.include_router(frontRouter)
-
+app.include_router(mediaRouter)
 
 
 # @app.middleware("https")

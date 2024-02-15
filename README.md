@@ -11,13 +11,13 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - postgresql
 ### future features
 - [x] complete /prog, /about
-- [ ] photo in post (support in the database and bot, without frontend)
-- [ ] docker container
+- [x] photo in post
 - [ ] comments via tg bot
 - [ ] tg instants view
 - [ ] complete function tg bot
 - [ ] complete PWA
 - [ ] admin panel
+- [ ] docker container
 - [ ] ***deploy!***
 ---
 ### install 

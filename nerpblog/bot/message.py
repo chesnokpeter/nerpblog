@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import Router, F, exceptions
 from aiogram.enums import ParseMode
 from aiogram.types import Message, ContentType, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
 from aiogram.fsm.context import FSMContext
@@ -28,7 +28,7 @@ async def handler(message: Message, command: CommandObject):
     await message.answer(f"Your payload: {payload}")
 
 @router.message(CommandStart())
-async def command_start_handler(message: Message, state: FSMContext, command: CommandObject) -> None:
+async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.clear() 
     if uservices.get_user(tgid=message.chat.id):
         await message.answer(f'''nerp.blog\n\nКажется, вы уже зарегистрированы!🎉''')
@@ -67,27 +67,39 @@ async def post_title_handler(message: Message, state: FSMContext) -> None:
     await message.answer('Отлично, теперь напиши название твоего поста')
 
 @router.message(Post.title)
-async def post_overview_handler(message: Message, state: FSMContext) -> None: #! сделать отправление сообщения с фотками если они есть
+async def post_overview_handler(message: Message, state: FSMContext) -> None:
     if message.content_type == ContentType.TEXT:
         data = await state.get_data()
         data['title'] = message.text
         await state.set_state(Post.overview)
         await state.set_data(data)
+        media_group = []
         k = [
                 [
                     InlineKeyboardButton(text='Опубликовать 🌐', callback_data='publish')
                 ],
+                # [
+                #     InlineKeyboardButton(text='Редактировать название ✏️ (Скоро!)', callback_data='edit_title')
+                # ],
+                # [
+                #     InlineKeyboardButton(text='Редактировать текст ✏️ (Скоро!)', callback_data='edit_text')
+                # ],
                 [
-                    InlineKeyboardButton(text='Редактировать название ✏️ (Скоро!)', callback_data='edit_title')
-                ],
-                [
-                    InlineKeyboardButton(text='Редактировать текст ✏️ (Скоро!)', callback_data='edit_text')
-                ],
-                [
-                    InlineKeyboardButton(text='Выйти ❌', callback_data='menu')
+                    InlineKeyboardButton(text='Отменить ❌', callback_data='menu')
                 ]
             ]
-        await message.answer(f'<b>Название:</b> {data["title"]}\n{data["html"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+        if not data['media']:
+            await message.answer(f'<b>Название:</b> {data["title"]}\n{data["html"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+        elif data['media']:
+            ind = 0
+            for i in data['media']:
+                media_group.append(InputMediaPhoto(media=i, caption=data['html'] if ind == 0 else None))
+                ind += 1
+            try:
+                await message.answer_media_group(media_group)
+                await message.answer(f'<b>Название:</b> {data["title"]}\n', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+            except exceptions.TelegramBadRequest:
+                await message.answer(f'<b>Произошла ошибка</b> при попытке <u>предпросмотра поста</u>, но вы всё равно можете выбрать действия', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
     else:
         pass
 
