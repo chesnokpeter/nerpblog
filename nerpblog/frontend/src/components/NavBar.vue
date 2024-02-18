@@ -67,8 +67,9 @@ export default {
         &.fixed {
             position: sticky;
             top: 0;
-            background-color: #121212;
+            background-color: #12121200;
             width: 100%;
+            backdrop-filter: blur(10px);
         }
     }
     a, .sep {
@@ -79,12 +80,14 @@ export default {
         font-weight: 700;
         line-height: normal;
         text-decoration: none;
+        color: #fff;
     }
 
     a:hover {
-        background-color: black;
+        color: #666;
+        // background-color: black;
         /* box-shadow: 0px 0px 0px 10px #000; */
-        text-decoration: underline;
+        // text-decoration: underline;
     }
 
 </style>

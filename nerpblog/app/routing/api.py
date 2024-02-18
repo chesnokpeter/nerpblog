@@ -22,9 +22,9 @@ def addLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
 def remLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
     return services.remove_like(id=id)
 
-@apiRouter.get('/speed')
-def speed(str: str):
-    return str
+# @apiRouter.get('/speed')
+# def speed(str: str):
+#     return str
 
 # @apiRouter.post('/addpost')
 # def APIremlike(post: AddPost, services: Annotated[PostServices, Depends(depends_post)]):

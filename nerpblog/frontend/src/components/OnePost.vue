@@ -1,17 +1,24 @@
 <template>
     <div class="post">
-        <router-link :to="{ name: 'post', params: { id: id }}" class="link-title">{{ title }}</router-link>
-        <router-link :to="{ name: 'post', params: { id: id }}" class="link-text"><p v-html="text" style="margin: 0;"></p></router-link>
+        <router-link class="top-post" :to="{ name: 'post', params: { id: id }}" >
+            <div class="title">
+                <div class="title-text">{{ title }}</div>
+                <img src="http://localhost:9001/icons/ui/arrow right up.svg" alt="" class="title-img">
+            </div>
+            <p v-html="text" style="margin: 0;"></p>            
+        </router-link>
+
         <div class="bott">
             <button 
                 id="likeBtn" 
-                :class="['like',{'isClick': isClick, 'afterClick': afterClick}]" 
+                :class="['like',{'liked':liked}]" 
                 v-bind:value="likeNum" @click="handleLikeBtn($event)"
             >
                 {{ likeNum }}
-                <img :src="`http://192.168.93.33:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
+                <img :src="`http://localhost:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
             </button>
-                <div class="nerpa">нерпа_<div class="author">{{ author }}</div>
+            <div class="media" v-if="media">{{ media.length }} media</div>
+            <div class="nerpa">нерпа_<div class="author">{{ author }}</div>
             </div>
         </div>
     </div>
@@ -44,28 +51,31 @@ export default {
         id: {
             type: Number,
             required: true
+        },
+        media: {
+            required: true
         }
     },
     data() {
         return {
             likeNum: this.likes,
-            isClick: false,
-            afterClick: false
+            liked: false
         }
     },
     methods: {
         async handleLikeBtn(event) {
             if (localStorage.getItem("likeList")) {
                 if (JSON.parse(localStorage.getItem('likeList')).includes(this.id)) {
-                    if (this.afterClick) {
+                    // if (this.afterClick) {
                         let LikeList = JSON.parse(localStorage.getItem("likeList"))
                         let remLikeList = LikeList.filter((LikeList) => LikeList !== this.id)
                         localStorage.setItem('likeList', JSON.stringify(remLikeList))
                         this.likeNum -= 1
-                        this.isClick = false; 
-                        this.afterClick = false;
+                        // this.isClick = false; 
+                        // this.afterClick = false;
+                        this.liked = false
                         await remLike(this.id)
-                    }
+                    // }
                 } else {
                     await this.handleLike(event)
                 }
@@ -75,14 +85,18 @@ export default {
         },
         async handleLike(event) {
             this.likeNum += 1
-            this.isClick = true
+            // this.isClick = true
+            this.liked = true
+            // this.afterClick = true
             let LikeList = JSON.parse(localStorage.getItem("likeList"))
             if (!LikeList) {LikeList = []}
             LikeList.push(this.id)
             localStorage.setItem('likeList', JSON.stringify(LikeList))
             confetti(event, this.id)
             await addLike(this.id)
-            setTimeout(() => { this.isClick = false; this.afterClick = true;
+            setTimeout(() => { 
+                // this.isClick = false;
+                // this.afterClick = true;
                 let confetti = document.getElementById(`confetti_${this.id}`)
                 if (confetti) {
                     confetti.remove()
@@ -93,8 +107,9 @@ export default {
     mounted() {
         if (localStorage.getItem("likeList")) {
             if (JSON.parse(localStorage.getItem('likeList')).includes(this.id)) {
-                this.isClick = false; 
-                this.afterClick = true;
+                // this.isClick = false; 
+                // this.afterClick = true;
+                this.liked = true
             }
         }
     }
@@ -102,40 +117,43 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .media {
+        font-size: 14px;
+        color: #666;
+    }
+    .top-post {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
     .openpost {
         color: #5383FF;
     }
-    .link-title:hover {
-        text-decoration: underline;
-        background-color: #000;
-    }
-
-    .link-text:hover {
-        background-color: #000;
-    }
-
     .bott {
         display: flex;
         justify-content: space-between;
         width: 100%;
         align-items: center;
+        
+        @media (min-width: 240px) {
+            gap: 10px;
+        }
     }
-
     .nerpa {
         display: flex;
-        padding-left: 20px;
+        // padding-left: 20px;
+        font-size: 14px;
+        color: #666;
     }
-
     a {
         text-decoration: none;
         color: #FFF;
     }
-
     .author {
         color: #5383FF;
         
     }
-
     .like {
         height: 30px;
         display: flex;
@@ -155,26 +173,16 @@ export default {
         transition: 0.2s ease-out;
         justify-content: center;
         align-items: center;
-        &.isClick {
-            color: #000;
-            border: #5383FF solid 2px;
-            box-shadow: 0px 0px 10px 1px #5383FF;
-            background-color: #5383FF;
-            // transform: scale(1.2)
-        }
-        &.afterClick {
+        &.liked {
             color: #000;
             border: #5383FF solid 2px;
             box-shadow: none;
             background-color: #5383FF;
-            // transform: scale(1.2)
         }
     }
-
     .like:hover {
         border: #5383FF solid 2px;
     }
-
     .post {
         display: flex;
         max-width: 400px;
@@ -192,8 +200,18 @@ export default {
         line-height: normal;
         word-wrap:break-word;
     }
-
     .post:hover {
-        color: #FFF;
+        background-color: #121212;
+    }
+    .post:hover .title-img {
+        display: flex;
+    }
+    .title-img {
+        display: none;
+        transition: display 0.5s; 
+    }
+    .title {
+        display: flex;
+        gap: 5px;
     }
 </style>

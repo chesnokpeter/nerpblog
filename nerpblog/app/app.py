@@ -11,18 +11,20 @@ from nerpblog.app.routing.media import mediaRouter
 app = FastAPI(title='nerpblog api')
 
 origins = [
-    "*"
+    "http://localhost:9001",
+    "http://localhost:9002"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.mount('/icons/like/', StaticFiles(directory='nerpblog/public/likes/'))
+app.mount('/icons/ui/', StaticFiles(directory='nerpblog/public/icons/'))
 # app.mount("/assets", StaticFiles(directory="nerpblog/app/static/dist/assets"), name="assets")
 app.include_router(apiRouter)
 app.include_router(frontRouter)

@@ -21,11 +21,19 @@ pservices = PostServices(pcontroller)
 
 router = Router()
 
-@router.message(CommandStart(deep_link=True))
-async def handler(message: Message, command: CommandObject):
-    args = command.args
-    payload = decode_payload(args)
-    await message.answer(f"Your payload: {payload}")
+# @router.message(CommandStart(deep_link=True))
+# async def handler(message: Message, command: CommandObject):
+#     args = command.args
+#     payload = decode_payload(args)
+#     if 'postid' in payload:
+#         # try: 
+#         postid = int(payload.split('postid')[0])
+#         # except Exception:
+#             # return
+#         p = pservices.get_one_post(postid)
+#         if not p: await message.answer('пост не найден')
+#     # return
+
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
@@ -78,12 +86,9 @@ async def post_overview_handler(message: Message, state: FSMContext) -> None:
                 [
                     InlineKeyboardButton(text='Опубликовать 🌐', callback_data='publish')
                 ],
-                # [
-                #     InlineKeyboardButton(text='Редактировать название ✏️ (Скоро!)', callback_data='edit_title')
-                # ],
-                # [
-                #     InlineKeyboardButton(text='Редактировать текст ✏️ (Скоро!)', callback_data='edit_text')
-                # ],
+                [
+                    InlineKeyboardButton(text='Редактировать ✏️ (Скоро!)', callback_data='edit')
+                ],
                 [
                     InlineKeyboardButton(text='Отменить ❌', callback_data='menu')
                 ]

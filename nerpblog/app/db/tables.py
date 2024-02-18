@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
-from nerpblog.app.models import PostModel, UserModel
+from nerpblog.app.models import PostModel, UserModel, CommentModel
 
 class Base(DeclarativeBase):
     def __repr__(self):
@@ -20,7 +20,7 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def get_attributes_dict(self) -> dict[str, Any]:
+    def get_attributes_dict(self) -> UserModel:
         return UserModel(
             id = self.id,
             tgid = self.tgid,
@@ -37,7 +37,7 @@ class POST(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def get_attributes_dict(self) -> dict[str, Any]:
+    def get_attributes_dict(self) -> PostModel:
         return PostModel(
             id = self.id,
             htmltext = self.htmltext,
@@ -48,3 +48,18 @@ class POST(Base):
             userid = self.userid
         )
 
+class COMMENT(Base):
+    __tablename__ = "comment"
+    id: Mapped[int] = mapped_column(Integer(), unique=True, primary_key=True, autoincrement=True, nullable=False)
+    text: Mapped[str] = mapped_column(String(), nullable=False)
+    date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
+    postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
+    userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    def get_attributes_dict(self) -> CommentModel:
+        return CommentModel(
+            id = self.id,
+            text = self.text,
+            date = self.date,
+            postid = self.postid,
+            userid = self.userid
+        )

@@ -18,6 +18,13 @@ class PostModel(BaseModel):
     likes: int
     userid: int
 
+class CommentModel(BaseModel):
+    id: int
+    text: str
+    date: datetime
+    postid: int
+    userid: int
+
 class AddPost(BaseModel):
     htmltext: str
     title: str
