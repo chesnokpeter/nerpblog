@@ -21,36 +21,37 @@ pservices = PostServices(pcontroller)
 
 router = Router()
 
-# @router.message(CommandStart(deep_link=True))  #! ТЕСТ
-# async def handler(message: Message, command: CommandObject):
-#     args = command.args
-#     payload = decode_payload(args)
-#     if 'postid' in payload:
-#         try: 
-#             postid = int(payload.split('postid')[0])
-#         except Exception:
-#             return
-#         p = pservices.get_one_post(postid)
-#         if not p: await message.answer('пост не найден')
-#         if p['media']:
-#             media_group = []
-#             for i in p['media']:
-#                 media_group.append(InputMediaPhoto(media=i))
-#                 await message.answer_media_group(media_group)
-#         await message.answer(f'<b>{p['title']}</b>\n{p['htmltext']}')
-#         k = [
-#                 [
-#                     InlineKeyboardButton(text='Написать комментарий ✏️', callback_data='add_comm')
-#                 ],
-#                 # [
-#                     # InlineKeyboardButton(text='Посмотреть комментарии 💬', callback_data='comments')
-#                 # ],
-#                 [
-#                     InlineKeyboardButton(text='Меню 🏡', callback_data='menu')
-#                 ]
-#         ]
-#         await message.answer(f'Лайков: {p['likes']}\n', reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
-#     return
+@router.message(CommandStart(deep_link=True))  #! ТЕСТ
+async def handler(message: Message, command: CommandObject):
+    args = command.args
+    payload = decode_payload(args)
+    print(payload.split('postid'))
+    if 'postid' in payload:
+        try: 
+            postid = int(payload.split('postid')[1])
+        except ValueError:
+            return
+        p = pservices.get_one_post(postid)
+        if not p: await message.answer('Пост не найден(')
+        await message.answer(p.htmltext, parse_mode=ParseMode.HTML)
+        if p.media:
+            media_group = []
+            for i in p.media:
+                media_group.append(InputMediaPhoto(media=i))
+                await message.answer_media_group(media_group)
+        k = [
+                [
+                    InlineKeyboardButton(text='Написать комментарий ✏️', callback_data='add_comm')
+                ],
+                # [
+                    # InlineKeyboardButton(text='Посмотреть комментарии 💬', callback_data='comments')
+                # ],
+                [
+                    InlineKeyboardButton(text='Меню 🏡', callback_data='menu')
+                ]
+        ]
+        await message.answer(f'<b>Название:</b> {p.title}', reply_markup=InlineKeyboardMarkup(inline_keyboard=k), parse_mode=ParseMode.HTML)
+    return
 
 
 @router.message(CommandStart())

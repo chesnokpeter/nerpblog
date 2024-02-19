@@ -28,11 +28,9 @@ class MediaMiddleware(BaseMiddleware):
         except KeyError:
             self.album_data[message.media_group_id] = [message]
             await asyncio.sleep(self.latency)
-
             data['_is_last'] = True
             data["album"] = self.album_data[message.media_group_id]
             await handler(message, data)
-
         if message.media_group_id and data.get("_is_last"):
             del self.album_data[message.media_group_id]
             del data['_is_last']
