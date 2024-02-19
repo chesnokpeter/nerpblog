@@ -23,7 +23,7 @@ class MediaMiddleware(BaseMiddleware):
             del self.album_data[1]
             return
         try:
-            print(message.media_group_id)
+            # print(message.media_group_id)
             self.album_data[message.media_group_id].append(message)
         except KeyError:
             self.album_data[message.media_group_id] = [message]
