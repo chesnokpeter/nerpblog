@@ -20,7 +20,7 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def get_attributes_dict(self) -> UserModel:
+    def model(self) -> UserModel:
         return UserModel(
             id = self.id,
             tgid = self.tgid,
@@ -37,7 +37,7 @@ class POST(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def get_attributes_dict(self) -> PostModel:
+    def model(self) -> PostModel:
         return PostModel(
             id = self.id,
             htmltext = self.htmltext,
@@ -55,7 +55,7 @@ class COMMENT(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def get_attributes_dict(self) -> CommentModel:
+    def model(self) -> CommentModel:
         return CommentModel(
             id = self.id,
             text = self.text,

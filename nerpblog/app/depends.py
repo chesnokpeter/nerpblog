@@ -2,16 +2,20 @@ from nerpblog.app.services import UserServices
 from nerpblog.app.db.controller import UserController
 from nerpblog.app.services import PostServices
 from nerpblog.app.db.controller import PostController
+from nerpblog.app.services import CommentServices
+from nerpblog.app.db.controller import CommentController
 
 from nerpblog.app.db import session
 
-
+ucontroller = UserController(session)
+pcontroller = PostController(session)
+ccontroller = CommentController(session)
 
 def depends_user():
-    controller = UserController(session)
-    return UserServices(controller)
+    return UserServices(ucontroller)
 
 def depends_post():
-    controller = PostController(session)
-    return PostServices(controller)
+    return PostServices(pcontroller)
 
+def depends_comm():
+    return CommentServices(ccontroller)

@@ -1,8 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
-from nerpblog.app.depends import depends_post, depends_user
-from nerpblog.app.services import PostServices, UserServices
+from nerpblog.app.depends import depends_post, depends_user, depends_comm
+from nerpblog.app.services import PostServices, UserServices, CommentServices
+
+from nerpblog.app.models import AddComment
 
 apiRouter = APIRouter(prefix='/api', tags=['api'])
 
@@ -21,6 +23,11 @@ def addLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
 @apiRouter.post('/remlike')
 def remLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
     return services.remove_like(id=id)
+
+@apiRouter.post('/comm')
+def addComm(comm: AddComment, services: Annotated[CommentServices, Depends(depends_comm)]):
+    return services.add_comment(comm)
+
 
 # @apiRouter.get('/speed')
 # def speed(str: str):
