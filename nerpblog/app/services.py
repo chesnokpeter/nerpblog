@@ -78,3 +78,6 @@ class CommentServices:
         data = data.model_dump()
         if data.get('tgid'): del data['tgid']
         return {'type':'sucess', 'detail': self.controller.add_comment(**data)}
+
+    def get_comments(self, **data) -> CommentModel:
+        return self.controller.get_comments(**data)

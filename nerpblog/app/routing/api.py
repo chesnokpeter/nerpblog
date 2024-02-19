@@ -24,10 +24,13 @@ def addLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
 def remLike(id: int, services: Annotated[PostServices, Depends(depends_post)]):
     return services.remove_like(id=id)
 
-@apiRouter.post('/comm')
-def addComm(comm: AddComment, services: Annotated[CommentServices, Depends(depends_comm)]):
-    return services.add_comment(comm)
+# @apiRouter.post('/comm')
+# def addComm(comm: AddComment, services: Annotated[CommentServices, Depends(depends_comm)]):
+#     return services.add_comment(comm)
 
+# @apiRouter.post('/getcomm')
+# def addComm(postid: int, services: Annotated[CommentServices, Depends(depends_comm)]):
+#     return services.get_comments(postid=postid)
 
 # @apiRouter.get('/speed')
 # def speed(str: str):

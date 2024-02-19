@@ -111,18 +111,13 @@ async def post_overview_handler(message: Message, state: FSMContext) -> None:
                     InlineKeyboardButton(text='Отменить ❌', callback_data='menu')
                 ]
             ]
-        if not data['media']:
-            await message.answer(f'<b>Название:</b> {data["title"]}\n{data["html"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
-        elif data['media']:
-            ind = 0
+        await message.answer(data["html"], parse_mode=ParseMode.HTML)
+        if data['media']:
+            media_group = []
             for i in data['media']:
-                media_group.append(InputMediaPhoto(media=i, caption=data['html'] if ind == 0 else None))
-                ind += 1
-            try:
-                await message.answer_media_group(media_group)
-                await message.answer(f'<b>Название:</b> {data["title"]}\n', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
-            except exceptions.TelegramBadRequest:
-                await message.answer(f'<b>Произошла ошибка</b> при попытке <u>предпросмотра поста</u>, но вы всё равно можете выбрать действия', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+                media_group.append(InputMediaPhoto(media=i))
+            await message.answer_media_group(media_group)
+        await message.answer(f'<b>Название:</b> {data["title"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
     else:
         pass
 
