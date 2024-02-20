@@ -11,7 +11,8 @@ from nerpblog.app.models import (
     AddComment, 
     AddCommentExtended,
     PostExtended,
-    CommentModel
+    CommentModel,
+    CommentExtended
 )
 
 from aiogram.utils.deep_linking import create_deep_link
@@ -79,5 +80,8 @@ class CommentServices:
         if data.get('tgid'): del data['tgid']
         return {'type':'sucess', 'detail': self.controller.add_comment(**data)}
 
-    def get_comments(self, **data) -> CommentModel:
-        return self.controller.get_comments(**data)
+    def get_comments(self, **data) -> List[CommentExtended]:
+        list = self.controller.get_comments(**data)
+        it = 0
+        for i in list: list[it] = CommentExtended(**i.model_dump(), username=self.controller.get_user(id=i.userid).name);it+=1
+        return list

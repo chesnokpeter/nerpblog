@@ -3,8 +3,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQu
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
-from nerpblog.bot.state import Post
-from nerpblog.bot.message import pservices, AddPost, uservices
+from datetime import datetime
+
+from nerpblog.bot.state import Post, Comment
+from nerpblog.bot.message import pservices, AddPost, uservices, AddComment, cservices
+
+from nerpblog.bot.config import menu_keyboard, post_menu_keyboard
 
 
 router = Router()
@@ -19,36 +23,31 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
     elif callback.data == 'menu':
         await state.clear()
         await callback.answer()
-        k = [
-                [
-                    InlineKeyboardButton(text='Создать пост 📝', callback_data='create')
-                ],
-                [
-                    InlineKeyboardButton(text='Посмотреть комментарии 💬 (Скоро!)', callback_data='comments')
-                ],
-                [
-                    InlineKeyboardButton(text='Мои посты 🗂 (Скоро!)', callback_data='posts')
-                ]
-            ]
-        await callback.message.edit_text('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+        await callback.message.edit_text('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=menu_keyboard())
     elif callback.data == 'publish':
         await callback.answer()
         data = await state.get_data()
         await state.clear()
         if not data: return
+        if not data.get('html') and not data.get('title') and not data.get('media'):return
         pservices.new_post(AddPost(htmltext=data['html'], title=data['title'], userid=uservices.get_user(tgid=callback.message.chat.id)[0].id, media=data['media']))
         await callback.message.edit_text('<b>Пост опубликован!</b> 🎉\nСсылка: (Скоро!)', inline_message_id=callback.inline_message_id, parse_mode=ParseMode.HTML)
-        k = [
-                [
-                    InlineKeyboardButton(text='Создать пост 📝', callback_data='create')
-                ],
-                [
-                    InlineKeyboardButton(text='Посмотреть комментарии 💬 (Скоро!)', callback_data='comments')
-                ],
-                [
-                    InlineKeyboardButton(text='Мои посты 🗂 (Скоро!)', callback_data='posts')
-                ]
-            ]
-        await callback.message.answer('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
+        await callback.message.answer('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=menu_keyboard())
+    elif callback.data == 'add_comm':
+        await callback.answer()
+        data = await state.get_data()
+        await state.set_state(Comment.comment)
+        await state.set_data(data)
+        await callback.message.answer('Напиши свой комментарий к посту')
+    elif callback.data == 'list_comm':
+        await callback.answer()
+        data = await state.get_data()
+        if not data.get('postid'): return
+        comments = cservices.get_comments(postid=data['postid'])
+        if not comments: await callback.message.answer('Комментарии не найдены :(', reply_markup=post_menu_keyboard())
+        it = 0
+        for i in comments:
+            i.date = datetime.strptime(str(i.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
+            await callback.message.answer(f'<u><b>{i.username}</b></u>\n{i.text}\n<b>{i.date}</b>', parse_mode=ParseMode.HTML, reply_markup=post_menu_keyboard()) if it + 1 == len(comments) else await callback.message.answer(f'<u><b>{i.username}</b></u>\n{i.text}\n<b>{i.date}</b>', parse_mode=ParseMode.HTML);it+=1
     else:
         await callback.answer()

@@ -39,6 +39,9 @@ class CommentModel(BaseModel):
     postid: int
     userid: int
 
+class CommentExtended(CommentModel):
+    username: str
+
 class AddComment(BaseModel):
     text: str
     postid: int

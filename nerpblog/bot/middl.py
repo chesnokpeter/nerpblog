@@ -2,7 +2,7 @@ import asyncio
 from typing import Callable, Any, Awaitable, Union
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import Message, ContentType
 
 class MediaMiddleware(BaseMiddleware):
     album_data: dict = {}
@@ -16,6 +16,7 @@ class MediaMiddleware(BaseMiddleware):
             message: Message,
             data: dict[str, Any]
     ) -> Any:
+        if message.content_type == ContentType.TEXT: await handler(message, data);return
         if not message.media_group_id:
             self.album_data[1] = [message]
             data["album"] = self.album_data[1]
