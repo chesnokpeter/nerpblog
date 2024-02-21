@@ -58,13 +58,6 @@ async def handler_deep_link(message: Message, command: CommandObject, state: FSM
         await message.answer(f'<b>Название:</b> {p.title}\n<b>Лайков:</b> {p.likes}\n<b>Дата:</b> {p.date}', reply_markup=post_menu_keyboard(), parse_mode=ParseMode.HTML)
     return
 
-@router.message(Comment.comment, F.content_type.in_([ContentType.TEXT]))
-async def add_comment_handler(message: Message, state: FSMContext) -> None:
-    data = await state.get_data()
-    if not data.get('postid'): return
-    cservices.add_comment(AddComment(text=message.text, postid=data['postid'], tgid=message.chat.id))
-    await message.answer('Ваш комментарий опубликован!')
-
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.clear() 
@@ -74,6 +67,14 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username)
         await message.answer(f'''nerp.blog\n\nВы успешно зарегистрировались!🎉''')
     await message.answer('Меню 🏡', reply_markup=menu_keyboard())
+
+@router.message(Comment.comment, F.content_type.in_([ContentType.TEXT]))
+async def add_comment_handler(message: Message, state: FSMContext) -> None:
+    data = await state.get_data()
+    if not data.get('postid'): return
+    cservices.add_comment(AddComment(text=message.text, postid=data['postid'], tgid=message.chat.id))
+    await message.answer('Ваш комментарий опубликован', reply_markup=post_menu_keyboard())
+
 
 @router.message(Post.text, F.content_type.in_([ContentType.PHOTO]))
 async def post_title_media(message: Message, album: list[Message], state: FSMContext):

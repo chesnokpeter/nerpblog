@@ -5,7 +5,7 @@
         <p class="htmltext" v-html="post.htmltext"></p>
         <div class="media" v-if="post.media">
             <div v-for="i in post.media">
-                <img :src="`http://localhost:9001/media/photo/${i}`" alt="" class="img"  style="max-width: 400px;">
+                <img :src="`http://localhost:9001/media/photo/${i}`" alt="" class="img"  style="max-width: 300px;">
             </div>
         </div>
         <div class="menu">
@@ -24,9 +24,14 @@
         <div @click="commExpand()" :class="['comments',{'expanded': commExpanded}]">
             комментарии {{ comments.length }}
             <img class="arrowDown" src="http://localhost:9001/icons/ui/arrow down.svg" alt="">
+        </div>
+        <div class="commentShow" v-if="commentShow">
+            <div class="commentShowText">чтобы оставить комментарий, откройте статью в боте</div>
+            <one-comment v-for="i in comments" :text="i.text" :date="i.date" :username="i.username"></one-comment>
         </div>    
-    </div>        
-    <by-chesnok :class="['by',{'notLoaded': notLoaded}]" style="margin-bottom: 50px;"></by-chesnok>
+    </div>       
+    <div class="empty" style="margin-bottom: 30px;"></div>
+    <!-- <by-chesnok :class="['by',{'notLoaded': notLoaded}]" style="margin-bottom: 50px;"></by-chesnok> -->
     <a :class="['opentg',{'notLoaded': notLoaded}]" :href="post.botlink">открыть в боте <img class="arrow-expand" src="http://localhost:9001/icons/ui/arrow expand.svg" alt=""></a>
 
 </template>
@@ -39,10 +44,12 @@ import addLike from '@/modules/like.js';
 import remLike from '@/modules/remlike.js';
 import confetti from '@/modules/confetti.js'
 import ByChesnok from '@/components/ByChesnok.vue'
+import OneComment from '@/components/OneComment.vue'
+import get_comment from '@/modules/get_comment.js'
 
 export default {
     components: {
-        BackToMain, ByChesnok
+        BackToMain, ByChesnok, OneComment
     }, 
     props: {
         id: {
@@ -57,11 +64,13 @@ export default {
             post: {},
             likeNum: 0,
             notLoaded: true,
-            liked: false
+            liked: false,
+            commentShow: false
         }
     }, 
     async mounted() {
         this.post = await getOnePost(this.id)
+        this.comments = await get_comment(this.id)
         if (this.post) {
             this.notLoaded = false
             this.likeNum = this.post.likes
@@ -115,8 +124,8 @@ export default {
                 this.commExpanded = !this.commExpanded
             } else if (!this.commExpanded) {
                 this.commExpanded = !this.commExpanded
-            }
-            console.log(this.commExpanded);
+            } 
+            this.commentShow = !this.commentShow
         }
     }
 }
@@ -124,6 +133,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .commentShowText {
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .commentShow {
+        font-family: 'Mulish';
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        color: #666666;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        transition: 1s;
+    }
     .comments {
         background-color: #202020;
         height: 30px;
@@ -243,7 +271,8 @@ export default {
     .post {
         display: flex;
         max-width: 400px;
-        padding: 0 10px;
+        width: 100%;
+
         flex-direction: column;
         align-items: center;
         gap: 10px;
@@ -259,8 +288,10 @@ export default {
         &.notLoaded {
             display: none;
         }
+
+        @media (max-width: 420px) {
+            // padding: 0 10px;
+        }
     }
-    .post:hover {
-        color: #FFF;
-    }
+
 </style>

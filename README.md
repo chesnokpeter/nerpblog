@@ -10,9 +10,8 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - sqlalchemy
 - postgresql
 ### future features
-- [x] complete /prog, /about
-- [x] photo in post
-- [ ] comments via tg bot
+- [x] <ins>photo in post</ins>
+- [x] <ins>comments via tg bot</ins>
 - [ ] tg instants view
 - [ ] complete function tg bot
 - [ ] complete PWA

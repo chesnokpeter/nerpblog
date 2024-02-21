@@ -1,5 +1,5 @@
 <template>
-    <div class="nav">
+    <div :class="['nav',{'fixed': fixed}]">
         <router-link to="/" id="back"> // back to main //</router-link>
     </div>
 </template>
@@ -8,17 +8,39 @@
 <script>
 import { RouterLink } from 'vue-router'
 export default {
-
+    data() {
+        return {
+            fixed: false
+        }
+    },
+    mounted() {
+        window.addEventListener('scroll', async (event) => {
+            if (window.scrollY > 150) {
+                this.fixed = true
+            } else if (window.scrollY < 150) {
+                this.fixed = false
+            }
+        })
+    }
 }
 
 </script>
 
-<style scoped>
+<style scoped  lang="scss">
     .nav {
         display: flex;
         justify-content: center;
         align-items: flex-start;
         gap: 10px;
+        padding: 10px 0;
+        margin: -10px 0;
+        &.fixed {
+            position: sticky;
+            top: 0;
+            background-color: #12121200;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
     }
 
     a, .sep {
@@ -32,8 +54,9 @@ export default {
 }
 
 a:hover {
-        background-color: black;
+    color: #666;
+        /* background-color: black; */
         /* box-shadow: 0px 0px 0px 10px #000; */
-        text-decoration: underline;
+        /* text-decoration: underline; */
     }
 </style>
