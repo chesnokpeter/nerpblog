@@ -8,3 +8,6 @@ class Post(StatesGroup):
 class Comment(StatesGroup):
     post = State()
     comment = State()
+
+class Pagination(StatesGroup):
+    page = State()

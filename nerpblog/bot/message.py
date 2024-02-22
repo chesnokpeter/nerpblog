@@ -94,33 +94,30 @@ async def post_title_handler(message: Message, state: FSMContext) -> None:
     await state.set_data({'plain':message.text,'html':message.html_text, 'media':None})
     await message.answer('Напиши <b><u>название</u></b> твоего поста', parse_mode=ParseMode.HTML)
 
-@router.message(Post.title)
+@router.message(Post.title, F.content_type.in_([ContentType.TEXT]))
 async def post_overview_handler(message: Message, state: FSMContext) -> None:
-    if message.content_type == ContentType.TEXT:
-        data = await state.get_data()
-        data['title'] = message.text
-        await state.set_state(Post.overview)
-        await state.set_data(data)
-        media_group = []
-        k = [
-                [
-                    InlineKeyboardButton(text='Опубликовать 🌐', callback_data='publish')
-                ],
-                [
-                    InlineKeyboardButton(text='Редактировать ✏️ (Скоро!)', callback_data='edit')
-                ],
-                [
-                    InlineKeyboardButton(text='Отменить ❌', callback_data='menu')
-                ]
+    data = await state.get_data()
+    data['title'] = message.text
+    await state.set_state(Post.overview)
+    await state.set_data(data)
+    media_group = []
+    k = [
+            [
+                InlineKeyboardButton(text='Опубликовать 🌐', callback_data='publish')
+            ],
+            [
+                InlineKeyboardButton(text='Редактировать ✏️ (Скоро!)', callback_data='edit')
+            ],
+            [
+                InlineKeyboardButton(text='Отменить ❌', callback_data='menu')
             ]
-        await message.answer(data["html"], parse_mode=ParseMode.HTML)
-        if data['media']:
-            media_group = []
-            for i in data['media']:
-                media_group.append(InputMediaPhoto(media=i))
-            await message.answer_media_group(media_group)
-        await message.answer(f'<b>Название:</b> {data["title"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
-    else:
-        pass
+        ]
+    await message.answer(data["html"], parse_mode=ParseMode.HTML)
+    if data['media']:
+        media_group = []
+        for i in data['media']:
+            media_group.append(InputMediaPhoto(media=i))
+        await message.answer_media_group(media_group)
+    await message.answer(f'<b>Название:</b> {data["title"]}', parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(inline_keyboard=k))
 
 

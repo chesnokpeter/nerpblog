@@ -66,6 +66,9 @@ class PostServices:
         if not l: return {"type":"error",'detail':'post not found'}
         return {'type':'sucess','detail':l}
 
+    def posts_by(self, offset: int = 0, limit: int = 10, **data) -> List[PostModel]:
+        return self.controller.posts_by(offset=offset, limit=limit, **data)
+
 class CommentServices:
     def __init__(self, controller: CommentController) -> None:
         self.controller = controller

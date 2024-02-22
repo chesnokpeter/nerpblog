@@ -1,17 +1,39 @@
-from aiogram import Router
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from aiogram import Router, F
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
 from datetime import datetime
 
-from nerpblog.bot.state import Post, Comment
+from nerpblog.bot.state import Post, Comment, Pagination
 from nerpblog.bot.message import pservices, AddPost, uservices, AddComment, cservices
-
 from nerpblog.bot.config import menu_keyboard, post_menu_keyboard
+from nerpblog.bot.menu import MenuManager
 
 
 router = Router()
+
+@router.callback_query(Pagination.page)
+async def callbacks_handler_pagination(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+    k = MenuManager(pservices)
+    if not data.get('offset') == 0: 
+        if not data.get('offset'): return
+    if callback.data == 'next_post':
+        data['offset'] += 6
+        await state.set_data(data)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(data['offset'], 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+    elif callback.data == 'back_post':
+        if data['offset'] <= 0:
+            return
+        data['offset'] -= 6
+        await state.set_data(data)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(data['offset'], 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+    elif callback.data == 'menu':
+        await state.clear()
+        await callback.answer()
+        await callback.message.edit_text('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=menu_keyboard())
 
 @router.callback_query()
 async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
@@ -49,5 +71,14 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
         for i in comments:
             i.date = datetime.strptime(str(i.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
             await callback.message.answer(f'<u><b>{i.username}</b></u>\n{i.text}\n<b>{i.date}</b>', parse_mode=ParseMode.HTML, reply_markup=post_menu_keyboard()) if it + 1 == len(comments) else await callback.message.answer(f'<u><b>{i.username}</b></u>\n{i.text}\n<b>{i.date}</b>', parse_mode=ParseMode.HTML);it+=1
+    elif callback.data == 'posts':
+        await callback.answer()
+        await state.clear()
+        await state.set_state(Pagination.page)
+        await state.set_data({"offset":0})
+        k = MenuManager(pservices)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(0, 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+
     else:
         await callback.answer()
+

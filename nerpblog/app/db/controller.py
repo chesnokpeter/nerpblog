@@ -58,6 +58,12 @@ class PostController:
         q.likes = q.likes-1
         self.session.commit()
         return q.model()
+    
+    def posts_by(self, offset: int = 0, limit: int = 10, **data) -> List[PostModel]:
+        q = self.session.query(POST).order_by(POST.id.desc()).filter_by(**data).offset(offset).limit(limit).all()
+        it = 0
+        for i in q: q[it] = i.model();it+=1
+        return q
 
 class CommentController:
     def __init__(self, session: Session) -> None:
@@ -76,9 +82,10 @@ class CommentController:
         self.session.add(comment)
         self.session.commit()
         return comment.model()
-
+    
     def get_comments(self, **data) -> List[CommentModel]:
         q = self.session.query(COMMENT).filter_by(**data).order_by(COMMENT.id.desc()).all()
         it = 0
         for i in q: q[it] = i.model();it+=1
         return q
+    
