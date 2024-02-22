@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message, InputMediaPhoto
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message, InputMediaPhoto, InlineQuery
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
@@ -95,3 +95,8 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
         await state.set_data({"offset":0})
         k = MenuManager(pservices)
         await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(0, 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+
+
+@router.inline_query()
+async def handle_inline_query(inline_query: InlineQuery):
+    print(inline_query)

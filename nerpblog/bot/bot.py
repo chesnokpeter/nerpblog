@@ -5,7 +5,6 @@ import logging
 from aiogram import Bot, Dispatcher #Router, types, F, BaseMiddleware
 # from aiogram.enums import ParseMode
 # from aiogram.filters import CommandStart, CommandObject
-from aiogram.types import Message, ContentType, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 # from aiogram.utils.markdown import hbold, hitalic, hunderline 
 # from aiogram.utils.keyboard import InlineKeyboardBuilder
 # from aiogram.utils.deep_linking import decode_payload
