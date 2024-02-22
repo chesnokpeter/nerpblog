@@ -10,7 +10,7 @@ def menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text='Посмотреть комментарии 💬 (Скоро!)', callback_data='comments')
         ],
         [
-            InlineKeyboardButton(text='Мои посты 🗂 (Скоро!)', callback_data='posts')
+            InlineKeyboardButton(text='Мои посты 🗂', callback_data='posts')
         ]
     ]
     return InlineKeyboardMarkup(inline_keyboard=k)
