@@ -49,7 +49,10 @@ async def callbacks_handler_pagination(callback: CallbackQuery, state: FSMContex
             await callback.message.answer_media_group(media_group)
         await state.set_state(Comment.post)
         await state.set_data({'postid':p.id})
-        p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
+        try:
+            p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
+        except ValueError:
+            p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S").strftime("%H:%MD%d.%m")
         await callback.message.answer(f'<b>Название:</b> {p.title}\n<b>Лайков:</b> {p.likes}\n<b>Дата:</b> {p.date}', reply_markup=post_menu_keyboard(), parse_mode=ParseMode.HTML)
 
 @router.callback_query(Post.overview)

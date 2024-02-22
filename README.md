@@ -13,7 +13,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - [x] ~~photo in post~~
 - [x] ~~comments via tg bot~~
 - [x] complete function tg bot
-- [ ] admin panel
+- [x] admin panel
 - [ ] tg instants view
 - [ ] complete PWA
 - [ ] docker container

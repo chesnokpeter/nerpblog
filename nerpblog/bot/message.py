@@ -54,7 +54,10 @@ async def handler_deep_link(message: Message, command: CommandObject, state: FSM
             await message.answer_media_group(media_group)
         await state.set_state(Comment.post)
         await state.set_data({'postid':p.id})
-        p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
+        try:
+            p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%MD%d.%m")
+        except ValueError:
+            p.date = datetime.strptime(str(p.date), "%Y-%m-%d %H:%M:%S").strftime("%H:%MD%d.%m")
         await message.answer(f'<b>Название:</b> {p.title}\n<b>Лайков:</b> {p.likes}\n<b>Дата:</b> {p.date}', reply_markup=post_menu_keyboard(), parse_mode=ParseMode.HTML)
     return
 
