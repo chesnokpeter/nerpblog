@@ -7,3 +7,7 @@ dist
 .bash
 alembic
 alembic.ini
+dev-dist
+ssl_1.py
+*.pem
+uvicorn.py
