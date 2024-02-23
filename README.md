@@ -25,7 +25,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 3. `python -m venv venv`
 4. `source venv/bin/activate` or `venv/Scripts/activate`(windows)
 5. `pip install -r requirements.txt`
-6. set environ variables BOT_TOKEN, DB_URL\
+6. set environ variables BOT_TOKEN, DB_URL, ADMIN_USER, ADMIN_PASS\
 `$env:BOT_TOKEN=""` (PS windows )\
 `export DB_URL=` (linux)
 7. `npm install`

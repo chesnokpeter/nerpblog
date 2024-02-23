@@ -1,12 +1,4 @@
-from typing import Any, cast
-from markupsafe import Markup
-
 from flask_admin.contrib.sqla import ModelView
-from wtforms import SelectField
-
-from nerpblog.app.db import session
-from nerpblog.app.db.tables import USER, POST, COMMENT
-
 
 class ABSView(ModelView):
     can_edit = True
@@ -17,9 +9,9 @@ class ABSView(ModelView):
     column_filters = ['id']
 
 class UserView(ABSView):
-    column_list = ['id', 'name', 'tgid', 'tglink']  
-    column_searchable_list = ['name']  
-    form_columns = ['name', 'tgid', 'tglink']  
+    column_list = ['id', 'name', 'tgid', 'tglink']
+    column_searchable_list = ['name']
+    form_columns = ['name', 'tgid', 'tglink']
 
 class PostView(ABSView):
     column_list = ['id', 'title', 'date', 'userid'] 
