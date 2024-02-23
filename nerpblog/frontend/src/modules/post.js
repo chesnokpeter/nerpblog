@@ -1,5 +1,5 @@
 export default function getPosts(offset = 0, limit = 10) {
-    return fetch(`http://localhost:9001/api/posts?offset=${offset}&limit=${limit}`, {method: 'GET', headers: {'Origin': 'http://localhost:9001'}})
+    return fetch(`/api/posts?offset=${offset}&limit=${limit}`, {method: 'GET', headers: {'Origin': ''}})
         .then(response => response.json())
         .then(response => {
             for (let i = 0; i < response.length; i++) {

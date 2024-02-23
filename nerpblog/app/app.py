@@ -29,7 +29,7 @@ app.mount('/icons/like/', StaticFiles(directory='nerpblog/public/likes/'))
 app.mount('/icons/ui/', StaticFiles(directory='nerpblog/public/icons/'))
 app.mount('/admin', WSGIMiddleware(admin.app))
 
-# app.mount("/assets", StaticFiles(directory="nerpblog/app/static/dist/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="nerpblog/app/static/dist/assets"), name="assets")
 app.include_router(apiRouter)
 app.include_router(frontRouter)
 app.include_router(mediaRouter)

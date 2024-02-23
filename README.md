@@ -6,6 +6,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - vue js
 - vite
 - fastapi
+- flask admin
 - aiogram
 - sqlalchemy
 - postgresql

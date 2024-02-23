@@ -3,7 +3,7 @@
         <router-link class="top-post" :to="{ name: 'post', params: { id: id }}" >
             <div class="title">
                 <div class="title-text">{{ title }}</div>
-                <img src="http://localhost:9001/icons/ui/arrow right up.svg" alt="" class="title-img">
+                <img :src="`/icons/ui/arrowrightup.svg`" alt="" class="title-img">
             </div>
             <p v-html="text" style="margin: 0;"></p>            
         </router-link>
@@ -15,7 +15,7 @@
                 v-bind:value="likeNum" @click="handleLikeBtn($event)"
             >
                 {{ likeNum }}
-                <img :src="`http://localhost:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
+                <img :src="`/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
             </button>
             <div class="media" v-if="media">{{ media.length }} media</div>
             <div class="nerpa">нерпа_<div class="author">{{ author }}</div>

@@ -5,7 +5,7 @@
         <p class="htmltext" v-html="post.htmltext"></p>
         <div class="media" v-if="post.media">
             <div v-for="i in post.media">
-                <img :src="`http://localhost:9001/media/photo/${i}`" alt="" class="img"  style="max-width: 300px;">
+                <img :src="`/media/photo/${i}`" alt="" class="img"  style="max-width: 300px;">
             </div>
         </div>
         <div class="menu">
@@ -15,7 +15,7 @@
                 v-bind:value="likeNum" @click="handleLikeBtn($event)"
             >
                 {{ likeNum }}
-                <img :src="`http://localhost:9001/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
+                <img :src="`/icons/like/heart%20(${Math.floor(1 + Math.random() * (36 + 1 - 1))}).png`" alt="" height="20px" id="heartLike">
             </button>
             <div class="date">{{ post.date }}</div>
             <div class="nerpa">нерпа_<div class="author">{{ post.username }}</div>
@@ -23,7 +23,7 @@
         </div>    
         <div @click="commExpand()" :class="['comments',{'expanded': commExpanded}]">
             комментарии {{ comments.length }}
-            <img class="arrowDown" src="http://localhost:9001/icons/ui/arrow down.svg" alt="">
+            <img class="arrowDown" :src="`/icons/ui/arrowdown.svg`" alt="">
         </div>
         <div class="commentShow" v-if="commentShow">
             <div class="commentShowText">чтобы оставить комментарий, откройте статью в боте</div>
@@ -32,7 +32,7 @@
     </div>       
     <div class="empty" style="margin-bottom: 30px;"></div>
     <!-- <by-chesnok :class="['by',{'notLoaded': notLoaded}]" style="margin-bottom: 50px;"></by-chesnok> -->
-    <a :class="['opentg',{'notLoaded': notLoaded}]" :href="post.botlink">открыть в боте <img class="arrow-expand" src="http://localhost:9001/icons/ui/arrow expand.svg" alt=""></a>
+    <a :class="['opentg',{'notLoaded': notLoaded}]" :href="post.botlink">открыть в боте <img class="arrow-expand" :src="`/icons/ui/arrowexpand.svg`" alt=""></a>
 
 </template>
 

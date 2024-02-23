@@ -16,5 +16,15 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9001',
+      }, '/media': {
+        target: 'http://localhost:9001',
+      }, '/icons': {
+        target: 'http://localhost:9001',
+    },
   }
-})
+}})

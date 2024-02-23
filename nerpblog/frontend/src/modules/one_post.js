@@ -1,5 +1,5 @@
 export default function getOnePost(id) {
-    return fetch(`http://localhost:9001/api/post/${id}`, {method: 'GET'})
+    return fetch(`/api/post/${id}`, {method: 'GET'})
         .then(response => response.json())
         .then(response => {
             if (response.htmltext) {

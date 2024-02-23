@@ -1,5 +1,5 @@
 export default function get_comment (id) {
-    return fetch(`http://localhost:9001/api/post/${id}/comments`, {method: 'GET'})
+    return fetch(`/api/post/${id}/comments`, {method: 'GET'})
     .then(response => response.json())
     .then(response => {
         for (let i = 0; i < response.length; i++) {
