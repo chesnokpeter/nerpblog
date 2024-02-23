@@ -5,6 +5,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 **you can write a post using a telegram bot, and the markup inside the post message is saved**
 - vue js
 - vite
+- PWA
 - fastapi
 - flask admin
 - aiogram
