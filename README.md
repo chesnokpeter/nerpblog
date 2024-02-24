@@ -1,6 +1,7 @@
 ![nerpblog](nerpblog/public/cover.png)
 ## nerpblog is a open-source proj post publishing
 ### with deep integration via Telegram
+**Open&Free&NoAds**\
 on the nerpblog you can see the posts, put a like, there is also a page of a particular post\
 **you can write a post using a telegram bot, and the markup inside the post message is saved**
 - vue js
