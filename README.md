@@ -44,7 +44,7 @@ coming soon `¯\_(ツ)_/¯`
     frontend port: 9002
     python 3.11.4 
     npm 10.2.4 
-
+    node 20.11.0
 
 
 
