@@ -1,34 +1,15 @@
-# FROM python:3.11.4-alpine
-# FROM node:20.11.0
-# # FROM npm:10.2.4 
+FROM python:3.11.8-bookworm
 
-# COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-# COPY . .
-
-# RUN apk add --no-cache py-pip
-
-# RUN pip3 install -r drequirements.txt
-# RUN npm install
-# RUN npm run build
-
-# ENV BOT_TOKEN "none"
-# ENV DB_URL "none"
-
-# EXPOSE 9001
-
-# CMD [ "/usr/bin/supervisord" ]
-
-
-FROM python:3.11.4-alpine
-
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY . .
 
-RUN apk add --no-cache nodejs npm py-pip
-
-RUN ls
-RUN pip install -r drequirements.txt
-RUN npm install
+RUN apt-get update 
+RUN apt-get install -y supervisor
+RUN apt-get install nodejs -y --no-install-recommends
+RUN apt-get install npm -y --no-install-recommends --fix-missing
+RUN mkdir -p /var/log/supervisor
+RUN pip install --upgrade pip 
+RUN pip install -r requirements.txt 
+RUN npm install 
 RUN npm run build
 
 ENV BOT_TOKEN="none"
@@ -36,4 +17,4 @@ ENV DB_URL="none"
 
 EXPOSE 9001
 
-CMD [ "/usr/bin/supervisord" ]
+CMD ["python", "main.py"]
