@@ -1,0 +1,13 @@
+FROM python:3.11.8-bookworm
+
+COPY . .
+
+RUN apt-get update
+
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+ENV DB_URL="none"
+ENV BOT_TOKEN="none"
+
+CMD ["python", "nerpblog/bot"]

@@ -11,3 +11,5 @@ dev-dist
 ssl_1.py
 *.pem
 uvicorn.py
+.git
+dump.docker

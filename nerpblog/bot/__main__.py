@@ -1,6 +1,6 @@
 import sys
-sys.path[0] = sys.path[0].split('nerpblog')[0]+'nerpblog'+sys.path[0].split('nerpblog')[1]
-print(sys.path)
+sys.path[0] = sys.path[0]+'/../../'
+print(sys.path[0])
 import asyncio
 import logging
 from nerpblog.bot.bot import main
