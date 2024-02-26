@@ -58,10 +58,10 @@ coming soon `¯\_(ツ)_/¯`
 `npm 10.2.4` \
 `node 20.11.0`\
 **environ variables:**\
-***DB_URL*** url to the database\
-***BOT_TOKEN*** telegram bot token\
-***ADMIN_USER*** *default:* `nerpadmin` | flask admin interface panel user\
-***ADMIN_PASS*** *default:* `nerp` | flask admin interface panel password
+***DB_URL*** - url to the database\
+***BOT_TOKEN*** - telegram bot token\
+***ADMIN_USER*** - *default:* `nerpadmin` | flask admin interface panel user\
+***ADMIN_PASS*** - *default:* `nerp` | flask admin interface panel password
 
 
 

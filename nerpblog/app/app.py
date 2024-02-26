@@ -32,7 +32,7 @@ app.mount("/assets/", StaticFiles(directory="nerpblog/app/static/dist/assets"))
 
 app.include_router(frontRouter)
 app.include_router(apiRouter)
-app.include_router(mediaRouter)
+app.include_router(mediaRouter) 
 
 
 # app.mount('/resource', StaticFiles(directory='nerpblog/app/static/dist/'))
