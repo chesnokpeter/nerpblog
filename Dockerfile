@@ -1,10 +1,15 @@
+FROM node:latest AS node_base
+
+RUN echo "NODE Version:" && node --version
+RUN echo "NPM Version:" && npm --version
+
 FROM python:3.11.8-bookworm
+
+COPY --from=node_base . .
 
 COPY . .
 
-RUN apt-get update && \
-    apt-get install nodejs -y --no-install-recommends && \
-    apt-get install npm -y --no-install-recommends --fix-missing
+RUN apt-get update
 
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
@@ -13,6 +18,7 @@ RUN npm install && \
     npm run build
 
 ENV DB_URL="none"
+ENV BOT_TOKEN="none"
 ENV ADMIN_USER="nerpadmin" 
 ENV ADMIN_PASS="nerp"
 

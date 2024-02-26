@@ -35,7 +35,7 @@ async def handler_deep_link(message: Message, command: CommandObject, state: FSM
     if uservices.get_user(tgid=message.chat.id):
         ...
     else:
-        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username)
+        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
         await message.answer(f'''nerp.blog\n\nВы успешно зарегистрировались!🎉''')
     args = command.args
     payload = decode_payload(args)
@@ -67,7 +67,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     if uservices.get_user(tgid=message.chat.id):
         await message.answer(f'''nerp.blog\n\nКажется, вы уже зарегистрированы!🎉''')
     else:
-        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username)
+        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
         await message.answer(f'''nerp.blog\n\nВы успешно зарегистрировались!🎉''')
     await message.answer('Меню 🏡', reply_markup=menu_keyboard())
 

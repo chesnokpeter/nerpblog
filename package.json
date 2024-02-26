@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "cd nerpblog/frontend && vite --port 9002 --host 0.0.0.0",
-    "build": "cd nerpblog/frontend && vite build --emptyOutDir ../app/static/dist/",
+    "build": "cd nerpblog/frontend && vite build --outDir ../app/static/dist/",
     "preview": "cd nerpblog/frontend && vite preview"
   },
   "dependencies": {
