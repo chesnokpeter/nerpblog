@@ -19,12 +19,21 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - [x] ~~admin panel~~
 - [ ] tg instants view
 - [x] ~~complete PWA~~
-- [ ] docker container
+- [x] ~~docker container~~
 - [ ] ***deploy!***
 ---
 ### install 
 #### docker:
-coming soon `¯\_(ツ)_/¯`
+run server
+```
+docker pull chesnokdeep/nerpblog:server
+docker run -d -p 9100:9100 -e DB_URL= -e BOT_TOKEN= -e ADMI_USER= -e ADMIN_PASS= chesnokdeep/nerpblog:server
+```
+run bot
+```
+docker pull chesnokdeep/nerpblog:bot
+docker run -d -e DB_URL= -e BOT_TOKEN= chesnokdeep/nerpblog:bot
+```
 #### linux: 
 1. `git clone https://github.com/chesnokpeter/nerpblog.git`
 2. `cd nerpblog`
@@ -43,13 +52,11 @@ coming soon `¯\_(ツ)_/¯`
 ### develop
 `source venv/bin/activate` or `venv/Scripts/activate` on windows\
 #### set environ variables BOT_TOKEN, DB_URL, ADMIN_USER, ADMIN_PASS
-    $env:BOT_TOKEN=[ TOKEN ]"" (PS windows )
+    $env:BOT_TOKEN="[ TOKEN ]" (PS windows )
     export DB_URL=[ URL ] (linux)
 backend: `uvicorn nerpblog:app --port 9001 --reload --host 0.0.0.0`\
 frontend: `npm run dev`\
 bot: `python nerpblog/bot`
-### production
-coming soon `¯\_(ツ)_/¯`
 ### config:
 `production port: 9100`\
 `backend port: 9001`\
@@ -58,10 +65,10 @@ coming soon `¯\_(ツ)_/¯`
 `npm 10.2.4` \
 `node 20.11.0`\
 **environ variables:**\
-***DB_URL*** - url to the database\
-***BOT_TOKEN*** - telegram bot token\
-***ADMIN_USER*** - *default:* `nerpadmin` | flask admin interface panel user\
-***ADMIN_PASS*** - *default:* `nerp` | flask admin interface panel password
+***`DB_URL`*** - url to the database\
+***`BOT_TOKEN`*** - telegram bot token\
+***`ADMIN_USER`*** - *default:* `nerpadmin`, flask admin interface panel user\
+***`ADMIN_PASS`*** - *default:* `nerp`, flask admin interface panel password
 
 
 
