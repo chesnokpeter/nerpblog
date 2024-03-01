@@ -40,9 +40,11 @@ class PostServices:
 
     async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchema]:
         async with self.uow:
-            res = await self.uow.post.offset(offset, limit)
-            for i, v in enumerate(res): res[i] = v[0].to_scheme()
-            return res
+            r: List[POST] = await self.uow.post.offset(offset, limit)
+            for i, v in enumerate(r): 
+                u: USER = await self.uow.user.get_one(id=r.userid) #! last dumb
+                r[i] = v[0].to_scheme()
+            return r
     
     async def get_post(self, **data) -> Post_User:
         async with self.uow:

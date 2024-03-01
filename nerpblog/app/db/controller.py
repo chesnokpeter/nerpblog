@@ -11,19 +11,16 @@ class AbsController:
     async def get(self, **data) -> List[model]:
         result = await self.session.execute(select(self.model).filter_by(**data)).all()
         return result
-
     async def get_one(self, **data) -> model:
         stmt = select(self.model).filter_by(**data)
         res = await self.session.execute(stmt)
         res = res.first()
         return res[0]
-
     async def add(self, **data) -> model:
         c = self.model(**data)
         self.session.add(c)
         self.session.commit()
         return c.model()
-
     async def offset(self, offset: int = 0, limit: int = 10, order = None, **data) -> List[model]:
         stmt = select(self.model).offset(offset).limit(limit)
         res = await self.session.execute(stmt)
