@@ -1,8 +1,10 @@
 from typing import Any, List, Union
 from datetime import datetime
-
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+
+from nerpblog.app.schemas.post import PostSchema, Post_User
+from nerpblog.app.schemas import BaseScheme
 
 
 class Base(DeclarativeBase):
@@ -12,6 +14,8 @@ class Base(DeclarativeBase):
         for col in [*mapper.column_attrs]:
             ent.append("{0}={1}".format(col.key, getattr(self, col.key)))
         return "<{0}(".format(self.__class__.__name__) + ", ".join(ent) + ")>"
+    def to_scheme(self) -> BaseScheme:
+        return BaseScheme()
 
 class USER(Base):
     __tablename__ = "user"
@@ -19,7 +23,7 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def to_dict(self) -> dict[str, Any]:
+    def to_scheme(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "tgid": self.tgid,
@@ -36,16 +40,16 @@ class POST(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "htmltext": self.htmltext,
-            "title": self.title,
-            "media": self.media,
-            "date": self.date,
-            "likes": self.likes,
-            "userid": self.userid
-        }
+    def to_scheme(self) -> PostSchema:
+        return PostSchema(
+            id = self.id,
+            htmltext = self.htmltext,
+            title = self.title,
+            media = self.media,
+            date = self.date,
+            likes = self.likes,
+            userid = self.userid
+        )
 
 class COMMENT(Base):
     __tablename__ = "comment"
@@ -54,7 +58,7 @@ class COMMENT(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def to_dict(self) -> dict[str, Any]:
+    def to_scheme(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "text": self.text,

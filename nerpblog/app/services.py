@@ -14,8 +14,9 @@ from nerpblog.app.models import (
     CommentModel,
     CommentExtended
 )
-
+from nerpblog.config import bot_username, bot_start_deeplink
 from nerpblog.app.db.tables import COMMENT, POST, USER
+from nerpblog.app.schemas.post import PostSchema, Post_User
 from nerpblog.app.uow import UnitOfWork
 from aiogram.utils.deep_linking import create_deep_link
 
@@ -37,16 +38,20 @@ class PostServices:
     def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
 
-    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[POST.to_dict]:
+    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchema]:
         async with self.uow:
             res = await self.uow.post.offset(offset, limit)
-            for i, v in enumerate(res): res[i] = v[0].to_dict()
+            for i, v in enumerate(res): res[i] = v[0].to_scheme()
             return res
     
-    async def get_post(self, **data) -> POST.to_dict:
+    async def get_post(self, **data) -> Post_User:
         async with self.uow:
-            r = await self.uow.post.get_one(**data)
-            return r.to_dict()
+            r: POST = await self.uow.post.get_one(**data)
+            if not r: return {}
+            u: USER = await self.uow.user.get_one(id=r.userid)
+            l = create_deep_link(bot_username, bot_start_deeplink, f'postid{r.id}', True)
+            r = Post_User(**r.to_scheme().model_dump(), username=u.name, botlink=l)
+            return r
 
     # def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:
     #     u = self.controller.get_user(id=data.userid)

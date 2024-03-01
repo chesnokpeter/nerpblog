@@ -10,7 +10,7 @@ class UnitOfWork:
     async def __aenter__(self):
         self.session = self.session_factory()
 
-        self.users = UserController(self.session)
+        self.user = UserController(self.session)
         self.comment = CommentController(self.session)
         self.post = PostController(self.session)
 

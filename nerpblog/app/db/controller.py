@@ -11,18 +11,12 @@ class AbsController:
     async def get(self, **data) -> List[model]:
         result = await self.session.execute(select(self.model).filter_by(**data)).all()
         return result
-        # stmt = select(self.model).filter_by(**data)
-        # res = await self.session.execute(stmt)
-        # res = res.scalar_one().to_read_model()
-        # return res
 
-        # return self.session.query(self.model).filter_by(**data).all()
     async def get_one(self, **data) -> model:
         stmt = select(self.model).filter_by(**data)
         res = await self.session.execute(stmt)
-        res = res.scalar_one()
-        return res
-        # return self.session.query(self.model).filter_by(**data).one_or_none()
+        res = res.first()
+        return res[0]
 
     async def add(self, **data) -> model:
         c = self.model(**data)

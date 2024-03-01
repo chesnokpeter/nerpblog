@@ -11,3 +11,6 @@ admin_password = os.environ.get('ADMIN_PASS')
 if not admin_username and not admin_password:
     admin_username = 'nerpadmin'
     admin_password = 'nerp'
+
+bot_username = 'nrpblgbot'
+bot_start_deeplink = 'start'
