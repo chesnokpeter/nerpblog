@@ -18,6 +18,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - [x] ~~complete function tg bot~~
 - [x] ~~admin panel~~
 - [ ] tg instants view
+- [ ] tg custom emoji
 - [x] ~~complete PWA~~
 - [x] ~~docker container~~
 - [ ] ***deploy!***
