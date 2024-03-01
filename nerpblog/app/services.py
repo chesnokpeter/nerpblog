@@ -15,6 +15,8 @@ from nerpblog.app.models import (
     CommentExtended
 )
 
+from nerpblog.app.db.tables import COMMENT, POST, USER
+from nerpblog.app.uow import UnitOfWork
 from aiogram.utils.deep_linking import create_deep_link
 
 class UserServices:
@@ -22,7 +24,7 @@ class UserServices:
         self.controller = controller
 
     def get_user(self, **data) -> List[UserModel]:
-        return self.controller.get_user(**data)
+        return self.controller.get_one(**data)
 
     def login_user(self, tgid: int, name: str, tglink: str) -> dict[str, Union[str, UserModel]]:
         u = self.controller.get_user(tgid=tgid)
@@ -32,42 +34,53 @@ class UserServices:
 
 
 class PostServices:
-    def __init__(self, controller: PostController) -> None:
-        self.controller = controller
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
 
-    def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:
-        u = self.controller.get_user(id=data.userid)
-        if not u: return {'type':'error','detail':'userid not found'}
-        data = AddPostExtended(**data.model_dump(), date=datetime.now(), likes=0)
-        return {'type':'sucess', 'detail': self.controller.new_post(**data.model_dump())}
+    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[POST.to_dict]:
+        async with self.uow:
+            res = await self.uow.post.offset(offset, limit)
+            for i, v in enumerate(res): res[i] = v[0].to_dict()
+            return res
+    
+    async def get_post(self, **data) -> POST.to_dict:
+        async with self.uow:
+            r = await self.uow.post.get_one(**data)
+            return r.to_dict()
 
-    def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostExtended]:
-        list = self.controller.get_posts(offset=offset, limit=limit)
-        it = 0
-        for i in list: 
-            list[it] = PostExtended(**i.model_dump(), username=self.controller.get_user(id=i.userid).name);it+=1
-        return list
+    # def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:
+    #     u = self.controller.get_user(id=data.userid)
+    #     if not u: return {'type':'error','detail':'userid not found'}
+    #     data = AddPostExtended(**data.model_dump(), date=datetime.now(), likes=0)
+    #     return {'type':'sucess', 'detail': self.controller.new_post(**data.model_dump())}
 
-    def get_one_post(self, id: int) -> PostExtended:
-        p = self.controller.get_one_post(id=id)
-        if not p: return {}
-        u = self.controller.get_user(id=p.userid).name
-        l = create_deep_link('nrpblgbot', 'start', f'postid{p.id}', True)
-        p = PostExtended(**p.model_dump(), username=u, botlink=l)
-        return p
+    # def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostExtended]:
+    #     list = self.controller.get_posts(offset=offset, limit=limit)
+    #     it = 0
+    #     for i in list: 
+    #         list[it] = PostExtended(**i.model_dump(), username=self.controller.get_user(id=i.userid).name);it+=1
+    #     return list
 
-    def add_like(self, id: int) -> dict[str, Union[str, PostModel]]:
-        l = self.controller.add_like(id=id)
-        if not l: return {"type":"error",'detail':'post not found'}
-        return {'type':'sucess','detail':l}
+    # def get_one_post(self, id: int) -> PostExtended:
+    #     p = self.controller.get_one(id=id)
+    #     if not p: return {}
+    #     u = self.controller.get_one(id=p.userid).name
+    #     l = create_deep_link('nrpblgbot', 'start', f'postid{p.id}', True)
+    #     # p = PostExtended(**p.model_dump(), username=u, botlink=l)
+    #     return p
 
-    def remove_like(self, id: int) -> dict[str, Union[str, PostModel]]:
-        l = self.controller.remove_like(id=id)
-        if not l: return {"type":"error",'detail':'post not found'}
-        return {'type':'sucess','detail':l}
+    # def add_like(self, id: int) -> dict[str, Union[str, PostModel]]:
+    #     l = self.controller.add_like(id=id)
+    #     if not l: return {"type":"error",'detail':'post not found'}
+    #     return {'type':'sucess','detail':l}
 
-    def posts_by(self, offset: int = 0, limit: int = 10, **data) -> List[PostModel]:
-        return self.controller.posts_by(offset=offset, limit=limit, **data)
+    # def remove_like(self, id: int) -> dict[str, Union[str, PostModel]]:
+    #     l = self.controller.remove_like(id=id)
+    #     if not l: return {"type":"error",'detail':'post not found'}
+    #     return {'type':'sucess','detail':l}
+
+    # def posts_by(self, offset: int = 0, limit: int = 10, **data) -> List[PostModel]:
+    #     return self.controller.posts_by(offset=offset, limit=limit, **data)
 
 class CommentServices:
     def __init__(self, controller: CommentController) -> None:

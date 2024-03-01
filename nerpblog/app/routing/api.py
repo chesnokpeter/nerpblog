@@ -6,11 +6,23 @@ from nerpblog.app.services import PostServices, UserServices, CommentServices
 
 from nerpblog.app.models import AddComment
 
+from nerpblog.app.depends import uowdep
+
 apiRouter = APIRouter(prefix='/api', tags=['api'])
 
 @apiRouter.get('/posts')
-def getPostsList(services: Annotated[PostServices, Depends(depends_post)], offset: int = 0, limit: int = 10):
-    return services.get_posts(offset=offset, limit=limit)
+async def getPostsList(uow: uowdep, offset: int = 0, limit: int = 10):
+    return await PostServices(uow).get_posts(offset, limit)
+
+@apiRouter.get('/post/{id}')
+async def getPost(id: int, uow: uowdep):
+    r = await PostServices(uow).get_post(id=id)
+    return r
+
+
+# @apiRouter.get('/posts')
+# def getPostsList(services: Annotated[PostServices, Depends(depends_post)], offset: int = 0, limit: int = 10):
+#     return services.get_posts(offset=offset, limit=limit)
 
 @apiRouter.get('/post/{id}')
 def getPost(id: int, services: Annotated[PostServices, Depends(depends_post)]):

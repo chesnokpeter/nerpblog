@@ -7,7 +7,7 @@ from nerpblog.app.routing.api import apiRouter
 from nerpblog.app.routing.front import frontRouter
 from nerpblog.app.routing.media import mediaRouter
 
-from nerpblog.app.admin import admin
+# from nerpblog.app.admin import admin
 
 app = FastAPI(title='nerpblog api')
 
@@ -27,10 +27,10 @@ app.add_middleware(
 
 app.mount('/icons/like/', StaticFiles(directory='nerpblog/public/likes/'))
 app.mount('/icons/ui/', StaticFiles(directory='nerpblog/public/icons/'))
-app.mount('/admin', WSGIMiddleware(admin.app))
+# app.mount('/admin', WSGIMiddleware(admin.app))
 app.mount("/assets/", StaticFiles(directory="nerpblog/app/static/dist/assets"))
 
-app.include_router(frontRouter)
+# app.include_router(frontRouter)
 app.include_router(apiRouter)
 app.include_router(mediaRouter) 
 

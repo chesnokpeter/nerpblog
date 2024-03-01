@@ -4,7 +4,6 @@ from datetime import datetime
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
-from nerpblog.app.models import PostModel, UserModel, CommentModel
 
 class Base(DeclarativeBase):
     def __repr__(self):
@@ -20,13 +19,13 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def model(self) -> UserModel:
-        return UserModel(
-            id = self.id,
-            tgid = self.tgid,
-            name = self.name,
-            tglink = self.tglink,
-        )
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "tgid": self.tgid,
+            "name": self.name,
+            "tglink": self.tglink,
+        }
 
 class POST(Base):
     __tablename__ = "post"
@@ -37,16 +36,16 @@ class POST(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def model(self) -> PostModel:
-        return PostModel(
-            id = self.id,
-            htmltext = self.htmltext,
-            title = self.title,
-            media = self.media,
-            date = self.date,
-            likes = self.likes,
-            userid = self.userid
-        )
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "htmltext": self.htmltext,
+            "title": self.title,
+            "media": self.media,
+            "date": self.date,
+            "likes": self.likes,
+            "userid": self.userid
+        }
 
 class COMMENT(Base):
     __tablename__ = "comment"
@@ -55,11 +54,11 @@ class COMMENT(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def model(self) -> CommentModel:
-        return CommentModel(
-            id = self.id,
-            text = self.text,
-            date = self.date,
-            postid = self.postid,
-            userid = self.userid
-        )
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "text": self.text,
+            "date": self.date,
+            "postid": self.postid,
+            "userid": self.userid
+        }
