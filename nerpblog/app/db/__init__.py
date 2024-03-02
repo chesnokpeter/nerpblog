@@ -13,7 +13,7 @@
 
 import asyncio
 from nerpblog.config import db_connect
-from nerpblog.app.db.tables import Base
+from nerpblog.app.db.models import Base
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 engine = create_async_engine(db_connect)

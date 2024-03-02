@@ -2,7 +2,7 @@ from flask import Flask
 from flask_admin import Admin, AdminIndexView, expose
 from flask_basicauth import BasicAuth
 
-from nerpblog.app.db.tables import USER, POST, COMMENT
+from nerpblog.app.db.models import USER, POST, COMMENT
 from nerpblog.app.admin.views import PostView, CommentView, UserView
 
 from nerpblog.app.db import session

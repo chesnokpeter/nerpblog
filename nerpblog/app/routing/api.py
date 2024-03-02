@@ -1,11 +1,5 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends
-
-from nerpblog.app.depends import depends_post, depends_user, depends_comm
-from nerpblog.app.services import PostServices, UserServices, CommentServices
-
-from nerpblog.app.models import AddComment
-
+from fastapi import APIRouter
+from nerpblog.app.services import PostServices, CommentServices #UserServices, 
 from nerpblog.app.depends import uowdep
 
 apiRouter = APIRouter(prefix='/api', tags=['api'])
@@ -19,7 +13,7 @@ async def getPost(id: int, uow: uowdep):
     return await PostServices(uow).one_post(id=id)
 
 @apiRouter.get('/post/{id}/comments')
-async def getPost(id: int, uow: uowdep):
+async def getComm(id: int, uow: uowdep):
     return await CommentServices(uow).get_comments(postid=id)
 
 @apiRouter.post('/like')

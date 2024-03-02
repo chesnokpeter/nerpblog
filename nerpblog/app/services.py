@@ -1,42 +1,16 @@
 from typing import List, Any, Union
 from datetime import datetime
-
-from nerpblog.app.db.controller import UserController, PostController, CommentController
-
-from nerpblog.app.models import (
-    UserModel, 
-    PostModel, 
-    AddPost, 
-    AddPostExtended, 
-    AddComment, 
-    AddCommentExtended,
-    PostExtended,
-    CommentModel,
-    CommentExtended
-)
-from nerpblog.config import bot_username, bot_start_deeplink
-from nerpblog.app.db.tables import COMMENT, POST, USER
-from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
-from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
-from nerpblog.app.uow import UnitOfWork
 from aiogram.utils.deep_linking import create_deep_link
 
-class UserServices:
-    def __init__(self, controller: UserController) -> None:
-        self.controller = controller
-
-    def get_user(self, **data) -> List[UserModel]:
-        return self.controller.get_one(**data)
-
-    def login_user(self, tgid: int, name: str, tglink: str) -> dict[str, Union[str, UserModel]]:
-        u = self.controller.get_user(tgid=tgid)
-        if u: return {'type':'error','detail':'tgid already exist'}
-        return {'type':'sucess', 'detail': self.controller.login_user(tgid=tgid,name=name, tglink=tglink)}
-
+from nerpblog.config import bot_username, bot_start_deeplink
+from nerpblog.app.db.models import COMMENT, POST, USER
+from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
+from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
+from nerpblog.app.uow import AbsUnitOfWork
 
 
 class PostServices:
-    def __init__(self, uow: UnitOfWork) -> None:
+    def __init__(self, uow: AbsUnitOfWork) -> None:
         self.uow = uow
 
     async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchemaExtend]:
@@ -76,16 +50,29 @@ class PostServices:
             return r.to_scheme() 
 
 class CommentServices:
-    def __init__(self, uow: UnitOfWork) -> None:
+    def __init__(self, uow: AbsUnitOfWork) -> None:
         self.uow = uow
 
-    async def get_comments(self, **data):
+    async def get_comments(self, **data) -> List[CommentSchemaExtend]:
         async with self.uow:
             c: List[List[COMMENT]] = await self.uow.comment.get(**data)
             for i, v in enumerate(c):
                 u: USER = await self.uow.user.get_one(id=v[0].userid)
                 c[i] = CommentSchemaExtend(**v[0].to_scheme().model_dump() , username=u.name)
             return c
+
+# class UserServices:
+#     def __init__(self, controller: UserController) -> None:
+#         self.controller = controller
+
+#     def get_user(self, **data) -> List[UserModel]:
+#         return self.controller.get_one(**data)
+
+#     def login_user(self, tgid: int, name: str, tglink: str) -> dict[str, Union[str, UserModel]]:
+#         u = self.controller.get_user(tgid=tgid)
+#         if u: return {'type':'error','detail':'tgid already exist'}
+#         return {'type':'sucess', 'detail': self.controller.login_user(tgid=tgid,name=name, tglink=tglink)}
+
 
 
     # def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:

@@ -1,11 +1,26 @@
 from typing import List, Any, Type
-
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
-from nerpblog.app.db.tables import USER, POST, COMMENT, Base
+from nerpblog.app.db.models import USER, POST, COMMENT, AbsMODEL, Base
 
-class AbsController:
-    model = Base
+from abc import ABC, abstractmethod, abstractproperty
+
+class AbsController(ABC):
+    model: AbsMODEL
+    @abstractmethod
+    def __init__(self): raise NotImplementedError
+    @abstractmethod
+    async def get(self): raise NotImplementedError
+    @abstractmethod
+    async def get_one(self): raise NotImplementedError
+    @abstractmethod
+    async def offset(self): raise NotImplementedError
+    @abstractmethod
+    async def update(self): raise NotImplementedError
+
+
+class Controller:
+    model = AbsMODEL
     def __init__(self, session: Session):
         self.session = session
     async def get(self, **data) -> List[List[model]]:
@@ -36,13 +51,13 @@ class AbsController:
         return await self.session.scalar(query)
 
 
-class UserController(AbsController):
+class UserController(Controller):
     model = USER
 
-class PostController(AbsController):
+class PostController(Controller):
     model = POST
 
-class CommentController(AbsController):
+class CommentController(Controller):
     model = COMMENT
 
 

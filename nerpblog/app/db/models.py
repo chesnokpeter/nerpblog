@@ -2,11 +2,15 @@ from typing import Any, List, Union
 from datetime import datetime
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
-
-from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
+from nerpblog.app.schemas.post import PostSchema
 from nerpblog.app.schemas.comment import CommentSchema
 from nerpblog.app.schemas import BaseScheme
+from abc import ABC, abstractmethod
 
+class AbsMODEL(ABC):
+    id: int
+    @abstractmethod
+    def to_scheme(self): raise NotImplementedError
 
 class Base(DeclarativeBase):
     def __repr__(self):
@@ -15,8 +19,6 @@ class Base(DeclarativeBase):
         for col in [*mapper.column_attrs]:
             ent.append("{0}={1}".format(col.key, getattr(self, col.key)))
         return "<{0}(".format(self.__class__.__name__) + ", ".join(ent) + ")>"
-    def to_scheme(self) -> BaseScheme:
-        return BaseScheme()
 
 class USER(Base):
     __tablename__ = "user"
