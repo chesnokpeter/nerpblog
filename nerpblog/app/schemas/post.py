@@ -12,6 +12,6 @@ class PostSchema(BaseModel):
     likes: int
     userid: int
 
-class Post_User(PostSchema):
+class PostSchemaExtend(PostSchema):
     username: str
     botlink: Union[None, str] = None

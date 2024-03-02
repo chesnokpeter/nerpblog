@@ -16,7 +16,7 @@ from nerpblog.app.models import (
 )
 from nerpblog.config import bot_username, bot_start_deeplink
 from nerpblog.app.db.tables import COMMENT, POST, USER
-from nerpblog.app.schemas.post import PostSchema, Post_User
+from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
 from nerpblog.app.uow import UnitOfWork
 from aiogram.utils.deep_linking import create_deep_link
 
@@ -38,21 +38,27 @@ class PostServices:
     def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
 
-    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchema]:
+    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchemaExtend]:
         async with self.uow:
-            r: List[POST] = await self.uow.post.offset(offset, limit)
+            r: List[List[POST]] = await self.uow.post.offset(offset, limit)
             for i, v in enumerate(r): 
-                u: USER = await self.uow.user.get_one(id=r.userid) #! last dumb
-                r[i] = v[0].to_scheme()
+                u: USER = await self.uow.user.get_one(id=v[0].userid) 
+                r[i] = PostSchemaExtend(**v[0].to_scheme().model_dump(), username=u.name)
             return r
-    
-    async def get_post(self, **data) -> Post_User:
+
+    async def one_post(self, **data) -> PostSchemaExtend:
         async with self.uow:
             r: POST = await self.uow.post.get_one(**data)
             if not r: return {}
             u: USER = await self.uow.user.get_one(id=r.userid)
             l = create_deep_link(bot_username, bot_start_deeplink, f'postid{r.id}', True)
-            r = Post_User(**r.to_scheme().model_dump(), username=u.name, botlink=l)
+            r = PostSchemaExtend(**r.to_scheme().model_dump(), username=u.name, botlink=l)
+            return r
+
+    async def add_like(self, id:int) -> PostSchema:
+        async with self.uow:
+            r = await self.uow.post.update(id, likes=10)
+            print(r)
             return r
 
     # def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:

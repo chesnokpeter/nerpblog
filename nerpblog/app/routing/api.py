@@ -15,10 +15,12 @@ async def getPostsList(uow: uowdep, offset: int = 0, limit: int = 10):
     return await PostServices(uow).get_posts(offset, limit)
 
 @apiRouter.get('/post/{id}')
-async def getPost(id: int, uow: uowdep):
-    r = await PostServices(uow).get_post(id=id)
-    return r
+async def getPost(id: int, uow: uowdep): 
+    return await PostServices(uow).one_post(id=id)
 
+@apiRouter.post('/like')
+async def addLike(uow: uowdep, id: int):
+    return await PostServices(uow).add_like(id=id)
 
 # @apiRouter.get('/posts')
 # def getPostsList(services: Annotated[PostServices, Depends(depends_post)], offset: int = 0, limit: int = 10):

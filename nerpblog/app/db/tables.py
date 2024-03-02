@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
-from nerpblog.app.schemas.post import PostSchema, Post_User
+from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
 from nerpblog.app.schemas import BaseScheme
 
 
