@@ -17,6 +17,7 @@ from nerpblog.app.models import (
 from nerpblog.config import bot_username, bot_start_deeplink
 from nerpblog.app.db.tables import COMMENT, POST, USER
 from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
+from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
 from nerpblog.app.uow import UnitOfWork
 from aiogram.utils.deep_linking import create_deep_link
 
@@ -51,15 +52,41 @@ class PostServices:
             r: POST = await self.uow.post.get_one(**data)
             if not r: return {}
             u: USER = await self.uow.user.get_one(id=r.userid)
+            if not u: return {}
             l = create_deep_link(bot_username, bot_start_deeplink, f'postid{r.id}', True)
             r = PostSchemaExtend(**r.to_scheme().model_dump(), username=u.name, botlink=l)
             return r
 
     async def add_like(self, id:int) -> PostSchema:
         async with self.uow:
-            r = await self.uow.post.update(id, likes=10)
-            print(r)
-            return r
+            p: POST = await self.uow.post.get_one(id=id)
+            if not p: return {}
+            r: POST = await self.uow.post.update(id, likes=p.likes+1)
+            await self.uow.commit()
+            if not r: return {}
+            return r.to_scheme() 
+
+    async def rem_like(self, id:int) -> PostSchema:
+        async with self.uow:
+            p: POST = await self.uow.post.get_one(id=id)
+            if not p: return {}
+            r: POST = await self.uow.post.update(id, likes=p.likes-1)
+            await self.uow.commit()
+            if not r: return {}
+            return r.to_scheme() 
+
+class CommentServices:
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
+
+    async def get_comments(self, **data):
+        async with self.uow:
+            c: List[List[COMMENT]] = await self.uow.comment.get(**data)
+            for i, v in enumerate(c):
+                u: USER = await self.uow.user.get_one(id=v[0].userid)
+                c[i] = CommentSchemaExtend(**v[0].to_scheme().model_dump() , username=u.name)
+            return c
+
 
     # def new_post(self, data: AddPost) -> dict[str, Union[str, UserModel]]:
     #     u = self.controller.get_user(id=data.userid)
@@ -95,22 +122,22 @@ class PostServices:
     # def posts_by(self, offset: int = 0, limit: int = 10, **data) -> List[PostModel]:
     #     return self.controller.posts_by(offset=offset, limit=limit, **data)
 
-class CommentServices:
-    def __init__(self, controller: CommentController) -> None:
-        self.controller = controller
+# class CommentServices:
+#     def __init__(self, controller: CommentController) -> None:
+#         self.controller = controller
 
-    def add_comment(self, data: AddComment) -> CommentModel:
-        p = self.controller.get_post(id=data.postid)
-        if not p: return {'type':'error','detail':'postid not found'}
-        u = self.controller.get_user(tgid=data.tgid)
-        if not u: return {'type':'error','detail':'tgid not found'}
-        data = AddCommentExtended(**data.model_dump(), date=datetime.now(), userid=u.id)
-        data = data.model_dump()
-        if data.get('tgid'): del data['tgid']
-        return {'type':'sucess', 'detail': self.controller.add_comment(**data)}
+#     def add_comment(self, data: AddComment) -> CommentModel:
+#         p = self.controller.get_post(id=data.postid)
+#         if not p: return {'type':'error','detail':'postid not found'}
+#         u = self.controller.get_user(tgid=data.tgid)
+#         if not u: return {'type':'error','detail':'tgid not found'}
+#         data = AddCommentExtended(**data.model_dump(), date=datetime.now(), userid=u.id)
+#         data = data.model_dump()
+#         if data.get('tgid'): del data['tgid']
+#         return {'type':'sucess', 'detail': self.controller.add_comment(**data)}
 
-    def get_comments(self, **data) -> List[CommentExtended]:
-        list = self.controller.get_comments(**data)
-        it = 0
-        for i in list: list[it] = CommentExtended(**i.model_dump(), username=self.controller.get_user(id=i.userid).name);it+=1
-        return list
+#     def get_comments(self, **data) -> List[CommentExtended]:
+#         list = self.controller.get_comments(**data)
+#         it = 0
+#         for i in list: list[it] = CommentExtended(**i.model_dump(), username=self.controller.get_user(id=i.userid).name);it+=1
+#         return list

@@ -8,28 +8,32 @@ class AbsController:
     model = Base
     def __init__(self, session: Session):
         self.session = session
-    async def get(self, **data) -> List[model]:
-        result = await self.session.execute(select(self.model).filter_by(**data)).all()
-        return result
-    async def get_one(self, **data) -> List[model]:
+    async def get(self, **data) -> List[List[model]]:
+        result = await self.session.execute(select(self.model).filter_by(**data))
+        return result.all()
+    async def get_one(self, **data) -> model:
         stmt = select(self.model).filter_by(**data)
         res = await self.session.execute(stmt)
         res = res.first()
         return res[0] if res else res
-    async def add(self, **data) -> model:
-        c = self.model(**data)
-        self.session.add(c)
-        self.session.commit()
-        return c.model()
+    # async def add(self, **data) -> model:
+    #     c = self.model(**data)
+    #     self.session.add(c)
+    #     self.session.commit()
+    #     return c.model()
     async def offset(self, offset: int = 0, limit: int = 10, order = None, **data) -> List[List[model]]:
         stmt = select(self.model).offset(offset).limit(limit)
         res = await self.session.execute(stmt)
         res = res.all()
         return res
-    async def update(self, id: int, **data):
-        query = update(self.model).where(self.model.id == id).values(**data).returning(self.model).execution_options(synchronize_session="fetch")
-        result = await self.session.execute(query)
-        return result.scalar_one()
+    async def update(self, id: int, **data) -> model:
+        query = (
+            update(self.model)
+            .where(self.model.id == id )
+            .values(**data)
+            .returning(self.model)
+        ) 
+        return await self.session.scalar(query)
 
 
 class UserController(AbsController):

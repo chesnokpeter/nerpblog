@@ -14,4 +14,4 @@ class PostSchema(BaseModel):
 
 class PostSchemaExtend(PostSchema):
     username: str
-    botlink: Union[None, str] = None
+    botlink: Union[None, str] = None 

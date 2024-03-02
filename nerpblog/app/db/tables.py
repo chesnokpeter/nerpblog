@@ -4,6 +4,7 @@ from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, Strin
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
 from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
+from nerpblog.app.schemas.comment import CommentSchema
 from nerpblog.app.schemas import BaseScheme
 
 
@@ -58,11 +59,11 @@ class COMMENT(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def to_scheme(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "text": self.text,
-            "date": self.date,
-            "postid": self.postid,
-            "userid": self.userid
-        }
+    def to_scheme(self) -> CommentSchema:
+        return CommentSchema(
+            id = self.id,
+            text = self.text,
+            date = self.date,
+            postid = self.postid,
+            userid = self.userid
+        )
