@@ -12,12 +12,17 @@
 # Base.metadata.create_all(engine)
 
 import asyncio
-from nerpblog.config import db_connect
+from nerpblog.config import db_connect, synchronous_url_db
 from nerpblog.app.db.models import Base
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+import sqlalchemy as alchemy
+from sqlalchemy.orm import Session
 
 engine = create_async_engine(db_connect)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+
+engine = alchemy.create_engine(synchronous_url_db(db_connect), pool_pre_ping=True)
+session = Session(engine)
 
 async def init_models():
     async with engine.begin() as conn:

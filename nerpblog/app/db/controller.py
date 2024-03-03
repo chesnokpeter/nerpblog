@@ -1,9 +1,9 @@
 from typing import List, Any, Type
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
-from nerpblog.app.db.models import USER, POST, COMMENT, AbsMODEL, Base
+from nerpblog.app.db.models import USER, POST, COMMENT, AbsMODEL
 
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 
 class AbsController(ABC):
     model: AbsMODEL
@@ -37,7 +37,7 @@ class Controller:
     #     self.session.commit()
     #     return c.model()
     async def offset(self, offset: int = 0, limit: int = 10, order = None, **data) -> List[List[model]]:
-        stmt = select(self.model).offset(offset).limit(limit)
+        stmt = select(self.model).offset(offset).limit(limit).order_by(order)
         res = await self.session.execute(stmt)
         res = res.all()
         return res

@@ -1,27 +1,30 @@
 from fastapi import APIRouter
 from nerpblog.app.services import PostServices, CommentServices #UserServices, 
+from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
+from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
 from nerpblog.app.depends import uowdep
+from typing import List
 
 apiRouter = APIRouter(prefix='/api', tags=['api'])
 
-@apiRouter.get('/posts')
-async def getPostsList(uow: uowdep, offset: int = 0, limit: int = 10):
+@apiRouter.get('/posts', response_model=List[PostSchemaExtend], description='get posts list')
+async def get_posts_list(uow: uowdep, offset: int = 0, limit: int = 10):
     return await PostServices(uow).get_posts(offset, limit)
 
-@apiRouter.get('/post/{id}')
-async def getPost(id: int, uow: uowdep): 
+@apiRouter.get('/post/{id}', response_model=PostSchemaExtend, description='get post by postid')
+async def get_post(id: int, uow: uowdep): 
     return await PostServices(uow).one_post(id=id)
 
-@apiRouter.get('/post/{id}/comments')
-async def getComm(id: int, uow: uowdep):
+@apiRouter.get('/post/{id}/comments', response_model=List[CommentSchemaExtend], description='get comments list by postid')
+async def get_comments_list(id: int, uow: uowdep):
     return await CommentServices(uow).get_comments(postid=id)
 
-@apiRouter.post('/like')
-async def addLike(uow: uowdep, id: int):
+@apiRouter.post('/like', response_model=PostSchema, description='add +1 like post by postid')
+async def add_like(uow: uowdep, id: int):
     return await PostServices(uow).add_like(id=id)
 
-@apiRouter.post('/remlike')
-async def remLike(uow: uowdep, id: int):
+@apiRouter.post('/remlike', response_model=PostSchema, description='remove -1 like post by postid')
+async def remove_like(uow: uowdep, id: int):
     return await PostServices(uow).rem_like(id=id)
 
 

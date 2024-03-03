@@ -6,16 +6,16 @@ from nerpblog.config import bot_username, bot_start_deeplink
 from nerpblog.app.db.models import COMMENT, POST, USER
 from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
 from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
-from nerpblog.app.uow import AbsUnitOfWork
+from nerpblog.app.uow import AbsUnitOfWork, UnitOfWork
 
 
 class PostServices:
-    def __init__(self, uow: AbsUnitOfWork) -> None:
+    def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
 
     async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchemaExtend]:
         async with self.uow:
-            r: List[List[POST]] = await self.uow.post.offset(offset, limit)
+            r: List[List[POST]] = await self.uow.post.offset(offset, limit, POST.id.desc())
             for i, v in enumerate(r): 
                 u: USER = await self.uow.user.get_one(id=v[0].userid) 
                 r[i] = PostSchemaExtend(**v[0].to_scheme().model_dump(), username=u.name)
@@ -50,7 +50,7 @@ class PostServices:
             return r.to_scheme() 
 
 class CommentServices:
-    def __init__(self, uow: AbsUnitOfWork) -> None:
+    def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
 
     async def get_comments(self, **data) -> List[CommentSchemaExtend]:
