@@ -4,38 +4,28 @@ from aiogram.types import Message, ContentType, InlineKeyboardMarkup, InlineKeyb
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import CommandStart, CommandObject
 from aiogram.utils.deep_linking import decode_payload
-
 from datetime import datetime
-
 from nerpblog.app.services import UserServices
-from nerpblog.app.db.controller import UserController
 from nerpblog.app.services import PostServices
-from nerpblog.app.db.controller import PostController
 from nerpblog.app.services import CommentServices
-from nerpblog.app.db.controller import CommentController
-from nerpblog.app.models import AddComment, AddPost
+from nerpblog.app.schemas.comment import AddComment
 
 from nerpblog.bot.config import menu_keyboard, post_menu_keyboard
-
-from nerpblog.app.db import session
 from nerpblog.bot.state import Post, Comment
 
-ucontroller = UserController(session)
-uservices =  UserServices(ucontroller)
-pcontroller = PostController(session)
-pservices = PostServices(pcontroller)
-ccontroller = CommentController(session)
-cservices = CommentServices(ccontroller)
+from nerpblog.app.uow import UnitOfWork
+uow = UnitOfWork()
+
 
 router = Router()
 
 @router.message(CommandStart(deep_link=True))
 async def handler_deep_link(message: Message, command: CommandObject, state: FSMContext):
     await state.clear() 
-    if uservices.get_user(tgid=message.chat.id):
+    if await UserServices(uow).get_user(tgid=message.chat.id):
         ...
     else:
-        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
+        await UserServices(uow).login(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
         await message.answer(f'''nerp.blog\n\nВы успешно зарегистрировались!🎉''')
     args = command.args
     payload = decode_payload(args)
@@ -44,7 +34,7 @@ async def handler_deep_link(message: Message, command: CommandObject, state: FSM
             postid = int(payload.split('postid')[1])
         except ValueError:
             return
-        p = pservices.get_one_post(postid)
+        p = await PostServices(uow).one_post(id=postid)
         if not p: await message.answer('Пост не найден(', reply_markup=menu_keyboard());return
         await message.answer(p.htmltext, parse_mode=ParseMode.HTML)
         if p.media:
@@ -64,10 +54,10 @@ async def handler_deep_link(message: Message, command: CommandObject, state: FSM
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.clear() 
-    if uservices.get_user(tgid=message.chat.id):
+    if await UserServices(uow).get_user(tgid=message.chat.id):
         await message.answer(f'''nerp.blog\n\nКажется, вы уже зарегистрированы!🎉''')
     else:
-        uservices.login_user(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
+        await UserServices(uow).login(tgid=message.chat.id, name=message.chat.first_name, tglink=message.chat.username if message.chat.username else 'none')
         await message.answer(f'''nerp.blog\n\nВы успешно зарегистрировались!🎉''')
     await message.answer('Меню 🏡', reply_markup=menu_keyboard())
 
@@ -75,7 +65,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 async def add_comment_handler(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     if not data.get('postid'): return
-    cservices.add_comment(AddComment(text=message.text, postid=data['postid'], tgid=message.chat.id))
+    await CommentServices(uow).add_comment(AddComment(text=message.text, postid=data['postid'], tgid=message.chat.id))
     await message.answer('Ваш комментарий опубликован', reply_markup=post_menu_keyboard())
 
 

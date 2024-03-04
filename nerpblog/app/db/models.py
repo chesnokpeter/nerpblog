@@ -4,7 +4,7 @@ from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, Strin
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from nerpblog.app.schemas.post import PostSchema
 from nerpblog.app.schemas.comment import CommentSchema
-from nerpblog.app.schemas import BaseScheme
+from nerpblog.app.schemas.user import UserModel
 from abc import ABC, abstractmethod
 
 class AbsMODEL(ABC):
@@ -26,13 +26,13 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def to_scheme(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "tgid": self.tgid,
-            "name": self.name,
-            "tglink": self.tglink,
-        }
+    def to_scheme(self) -> UserModel:
+        return UserModel(
+            id = self.id,
+            tgid = self.tgid,
+            name = self.name,
+            tglink = self.tglink,
+        )
 
 class POST(Base):
     __tablename__ = "post"

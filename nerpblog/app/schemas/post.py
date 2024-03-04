@@ -15,3 +15,13 @@ class PostSchema(BaseModel):
 class PostSchemaExtend(PostSchema):
     username: str
     botlink: Union[None, str] = None 
+
+class AddPost(BaseModel):
+    htmltext: str
+    title: str
+    userid: int
+    media: Union[List[str], None]
+
+class AddPostExtend(AddPost):
+    date: datetime
+    likes: int

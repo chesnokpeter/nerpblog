@@ -4,8 +4,9 @@ from aiogram.utils.deep_linking import create_deep_link
 
 from nerpblog.config import bot_username, bot_start_deeplink
 from nerpblog.app.db.models import COMMENT, POST, USER
-from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend
-from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend
+from nerpblog.app.schemas.post import PostSchema, PostSchemaExtend, AddPost, AddPostExtend
+from nerpblog.app.schemas.comment import CommentSchema, CommentSchemaExtend, AddComment, AddCommentExtend
+from nerpblog.app.schemas.user import UserModel
 from nerpblog.app.uow import AbsUnitOfWork, UnitOfWork
 
 
@@ -13,9 +14,9 @@ class PostServices:
     def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
 
-    async def get_posts(self, offset: int = 0, limit: int = 10) -> List[PostSchemaExtend]:
+    async def get_posts(self, offset: int = 0, limit: int = 10, **data) -> List[PostSchemaExtend]:
         async with self.uow:
-            r: List[List[POST]] = await self.uow.post.offset(offset, limit, POST.id.desc())
+            r: List[List[POST]] = await self.uow.post.offset(offset, limit, POST.id.desc(), **data)
             for i, v in enumerate(r): 
                 u: USER = await self.uow.user.get_one(id=v[0].userid) 
                 r[i] = PostSchemaExtend(**v[0].to_scheme().model_dump(), username=u.name)
@@ -48,6 +49,15 @@ class PostServices:
             await self.uow.commit()
             if not r: return {}
             return r.to_scheme() 
+    
+    async def add_post(self, data:AddPost):
+        async with self.uow:
+            u: USER = await self.uow.user.get_one(id=data.userid)
+            if not u: return
+            data = AddPostExtend(**data.model_dump(), date=datetime.now(), likes=0)
+            p: POST = await self.uow.post.add(**data.model_dump())
+            await self.uow.commit()
+            return p
 
 class CommentServices:
     def __init__(self, uow: UnitOfWork) -> None:
@@ -55,11 +65,39 @@ class CommentServices:
 
     async def get_comments(self, **data) -> List[CommentSchemaExtend]:
         async with self.uow:
-            c: List[List[COMMENT]] = await self.uow.comment.get(**data)
+            c: List[List[COMMENT]] = await self.uow.comment.offset(0, 100, COMMENT.id.desc(), **data)
             for i, v in enumerate(c):
                 u: USER = await self.uow.user.get_one(id=v[0].userid)
                 c[i] = CommentSchemaExtend(**v[0].to_scheme().model_dump() , username=u.name)
             return c
+    
+    async def add_comment(self, data: AddComment) -> CommentSchema:
+        async with self.uow:
+            if not await self.uow.post.get_one(id=data.postid): return 
+            u: USER = await self.uow.user.get_one(tgid=data.tgid)
+            data = AddCommentExtend(**data.model_dump(), userid=u.id, date=datetime.now())
+            data = data.model_dump()
+            if data.get('tgid'): del data['tgid']
+            c: COMMENT = await self.uow.comment.add(**data)
+            await self.uow.commit()
+            return c
+
+class UserServices:
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
+    
+    async def get_user(self, **data) -> UserModel:
+        async with self.uow:
+            u: USER = await self.uow.user.get_one(**data)
+            if not u: return 
+            return u.to_scheme()
+    
+    async def login(self, **data) -> UserModel:
+        async with self.uow:
+            u: USER = await self.uow.user.add(**data)
+            await self.uow.commit()
+            return u
+
 
 # class UserServices:
 #     def __init__(self, controller: UserController) -> None:

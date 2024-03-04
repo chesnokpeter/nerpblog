@@ -1,6 +1,6 @@
 from typing import List, Any, Type
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update
+from sqlalchemy import select, update, insert
 from nerpblog.app.db.models import USER, POST, COMMENT, AbsMODEL
 
 from abc import ABC, abstractmethod
@@ -31,13 +31,15 @@ class Controller:
         res = await self.session.execute(stmt)
         res = res.first()
         return res[0] if res else res
-    # async def add(self, **data) -> model:
-    #     c = self.model(**data)
-    #     self.session.add(c)
-    #     self.session.commit()
-    #     return c.model()
+    async def add(self, **data) -> model:
+        stmt = insert(self.model).values(**data)
+        stmt = stmt.returning(self.model)
+        return await self.session.scalar(stmt)
+        # c = self.model(**data)
+        # await self.session.add(c)
+        # return c
     async def offset(self, offset: int = 0, limit: int = 10, order = None, **data) -> List[List[model]]:
-        stmt = select(self.model).offset(offset).limit(limit).order_by(order)
+        stmt = select(self.model).offset(offset).limit(limit).order_by(order).filter_by(**data)
         res = await self.session.execute(stmt)
         res = res.all()
         return res

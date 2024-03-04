@@ -10,3 +10,12 @@ class CommentSchema(BaseModel):
 
 class CommentSchemaExtend(CommentSchema):
     username: str
+
+class AddComment(BaseModel):
+    text: str
+    postid: int
+    tgid: int
+
+class AddCommentExtend(AddComment):
+    date: datetime
+    userid: int

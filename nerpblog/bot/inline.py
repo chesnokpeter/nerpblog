@@ -2,13 +2,16 @@ from aiogram import Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message, InputMediaPhoto, InlineQuery
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
-
 from datetime import datetime
-
 from nerpblog.bot.state import Post, Comment, Pagination
-from nerpblog.bot.message import pservices, AddPost, uservices, AddComment, cservices
 from nerpblog.bot.config import menu_keyboard, post_menu_keyboard
 from nerpblog.bot.menu import MenuManager
+from nerpblog.app.services import UserServices
+from nerpblog.app.services import PostServices
+from nerpblog.app.services import CommentServices
+from nerpblog.app.uow import UnitOfWork
+from nerpblog.app.schemas.post import AddPost
+uow = UnitOfWork()
 
 
 router = Router()
@@ -17,19 +20,23 @@ router = Router()
 async def callbacks_handler_pagination(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
-    k = MenuManager(pservices)
+    k = MenuManager(PostServices(uow))
     if not data.get('offset') == 0: 
         if not data.get('offset'): return
     if callback.data == 'next_post':
         data['offset'] += 6
         await state.set_data(data)
-        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(data['offset'], 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+        u = await UserServices(uow).get_user(tgid=callback.message.chat.id)
+        k = await k.menu(data['offset'], 6, userid=u.id)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k)
     elif callback.data == 'back_post':
         if data['offset'] <= 0:
             return
         data['offset'] -= 6
         await state.set_data(data)
-        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(data['offset'], 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+        u = await UserServices(uow).get_user(tgid=callback.message.chat.id)
+        k = await k.menu(data['offset'], 6, userid=u.id)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k)
     elif callback.data == 'menu':
         await state.clear()
         await callback.answer()
@@ -39,7 +46,7 @@ async def callbacks_handler_pagination(callback: CallbackQuery, state: FSMContex
             postid = int(callback.data.split('postid')[1])
         except ValueError:
             return
-        p = pservices.get_one_post(postid)
+        p = await PostServices(uow).one_post(id=postid)
         if not p: await callback.message.answer('Пост не найден(', reply_markup=menu_keyboard());return
         await callback.message.answer(p.htmltext, parse_mode=ParseMode.HTML)
         if p.media:
@@ -63,7 +70,9 @@ async def callbacks_handler_post_overview(callback: CallbackQuery, state: FSMCon
         await state.clear()
         if not data: return
         if not data.get('html') and not data.get('title') and not data.get('media'):return
-        pservices.new_post(AddPost(htmltext=data['html'], title=data['title'], userid=uservices.get_user(tgid=callback.message.chat.id)[0].id, media=data['media']))
+        u = await UserServices(uow).get_user(tgid=callback.message.chat.id)
+        if not u: return
+        await PostServices(uow).add_post(AddPost(htmltext=data['html'], title=data['title'], userid=u.id, media=data['media']))
         await callback.message.edit_text('<b>Пост опубликован!</b> 🎉\nСсылка: (Скоро!)', inline_message_id=callback.inline_message_id, parse_mode=ParseMode.HTML)
         await callback.message.answer('Меню 🏡', inline_message_id=callback.inline_message_id, reply_markup=menu_keyboard())
 
@@ -86,7 +95,7 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
     elif callback.data == 'list_comm':
         data = await state.get_data()
         if not data.get('postid'): return
-        comments = cservices.get_comments(postid=data['postid'])
+        comments = await CommentServices(uow).get_comments(postid=data['postid'])
         if not comments: await callback.message.answer('Комментарии не найдены :(', reply_markup=post_menu_keyboard())
         it = 0
         for i in comments:
@@ -96,8 +105,10 @@ async def callbacks_handler(callback: CallbackQuery, state: FSMContext):
         await state.clear()
         await state.set_state(Pagination.page)
         await state.set_data({"offset":0})
-        k = MenuManager(pservices)
-        await callback.message.edit_text('Мои посты 🗂', reply_markup=k.menu(0, 6, userid=uservices.get_user(tgid=callback.message.chat.id)[0].id))
+        k = MenuManager(PostServices(uow))
+        u = await UserServices(uow).get_user(tgid=callback.message.chat.id)
+        k = await k.menu(0, 6, userid=u.id)
+        await callback.message.edit_text('Мои посты 🗂', reply_markup=k)
 
 
 @router.inline_query()
