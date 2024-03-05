@@ -16,8 +16,8 @@ if not admin_username and not admin_password:
 bot_username = 'nrpblgbot'
 bot_start_deeplink = 'start'
 
-frontend_app = False
-admin_app = False
+frontend_app = True
+admin_app = True
 
 def check_startup():
     if not db_connect or not bot_token:
