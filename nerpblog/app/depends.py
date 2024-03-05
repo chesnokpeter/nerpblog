@@ -1,21 +1,6 @@
-from nerpblog.app.services import UserServices
-from nerpblog.app.db.controller import UserController
-from nerpblog.app.services import PostServices
-from nerpblog.app.db.controller import PostController
-from nerpblog.app.services import CommentServices
-from nerpblog.app.db.controller import CommentController
+from fastapi import Depends
+from typing import Annotated
+from nerpblog.app.uow import UnitOfWork, AbsUnitOfWork
 
-from nerpblog.app.db import session
+uowdep = Annotated[AbsUnitOfWork, Depends(UnitOfWork)]
 
-ucontroller = UserController(session)
-pcontroller = PostController(session)
-ccontroller = CommentController(session)
-
-def depends_user():
-    return UserServices(ucontroller)
-
-def depends_post():
-    return PostServices(pcontroller)
-
-def depends_comm():
-    return CommentServices(ccontroller)

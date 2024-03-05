@@ -6,8 +6,8 @@ class MenuManager:
     def __init__(self, pservices: PostServices) -> None:
         self.services = pservices
 
-    def menu(self, offset: int, limit: int, **data) -> InlineKeyboardMarkup:
-        list = self.services.posts_by(offset=offset, limit=limit, **data)
+    async def menu(self, offset: int, limit: int, **data) -> InlineKeyboardMarkup:
+        list = await self.services.get_posts(offset=offset, limit=limit, **data)
         k = []
         l = False
         for i, v in enumerate(list):

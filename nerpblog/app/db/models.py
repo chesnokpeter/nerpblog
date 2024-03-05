@@ -1,10 +1,16 @@
 from typing import Any, List, Union
 from datetime import datetime
-
 from sqlalchemy import inspect, BigInteger, ForeignKey, DateTime, Integer, String, DateTime, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from nerpblog.app.schemas.post import PostSchema
+from nerpblog.app.schemas.comment import CommentSchema
+from nerpblog.app.schemas.user import UserModel
+from abc import ABC, abstractmethod
 
-from nerpblog.app.models import PostModel, UserModel, CommentModel
+class AbsMODEL(ABC):
+    id: int
+    @abstractmethod
+    def to_scheme(self): raise NotImplementedError
 
 class Base(DeclarativeBase):
     def __repr__(self):
@@ -20,7 +26,7 @@ class USER(Base):
     tgid: Mapped[int] = mapped_column(BigInteger(), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(), nullable=False, primary_key=True) 
     tglink: Mapped[str] = mapped_column(String(), nullable=False) 
-    def model(self) -> UserModel:
+    def to_scheme(self) -> UserModel:
         return UserModel(
             id = self.id,
             tgid = self.tgid,
@@ -37,8 +43,8 @@ class POST(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     likes: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def model(self) -> PostModel:
-        return PostModel(
+    def to_scheme(self) -> PostSchema:
+        return PostSchema(
             id = self.id,
             htmltext = self.htmltext,
             title = self.title,
@@ -55,8 +61,8 @@ class COMMENT(Base):
     date: Mapped[DateTime] = mapped_column(DateTime(), nullable=False, default=datetime.now())
     postid: Mapped[int] = mapped_column(ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
     userid: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    def model(self) -> CommentModel:
-        return CommentModel(
+    def to_scheme(self) -> CommentSchema:
+        return CommentSchema(
             id = self.id,
             text = self.text,
             date = self.date,

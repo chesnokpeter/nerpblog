@@ -12,6 +12,7 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - aiogram
 - sqlalchemy
 - postgresql
+- unit of work
 ### future features
 - [x] ~~photo in post~~
 - [x] ~~comments via tg bot~~
@@ -68,8 +69,8 @@ bot: `python nerpblog/bot`
 **environ variables:**\
 ***`DB_URL`*** - url to the database\
 ***`BOT_TOKEN`*** - telegram bot token\
-***`ADMIN_USER`*** - *default:* `nerpadmin`, flask admin interface panel user\
-***`ADMIN_PASS`*** - *default:* `nerp`, flask admin interface panel password
+***`ADMIN_USER`*** - flask admin interface panel user, *default:* `nerpadmin`\
+***`ADMIN_PASS`*** - flask admin interface panel password, *default:* `nerp`
 
 
 

@@ -3,11 +3,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.wsgi import WSGIMiddleware
 
+from nerpblog.config import check_startup, frontend_app, admin_app
+check_startup()
+
 from nerpblog.app.routing.api import apiRouter
 from nerpblog.app.routing.front import frontRouter
 from nerpblog.app.routing.media import mediaRouter
-
 from nerpblog.app.admin import admin
+
 
 app = FastAPI(title='nerpblog api')
 
@@ -16,7 +19,6 @@ origins = [
     "http://localhost:9002",
     "http://localhost:9003"
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -27,12 +29,15 @@ app.add_middleware(
 
 app.mount('/icons/like/', StaticFiles(directory='nerpblog/public/likes/'))
 app.mount('/icons/ui/', StaticFiles(directory='nerpblog/public/icons/'))
-app.mount('/admin', WSGIMiddleware(admin.app))
-app.mount("/assets/", StaticFiles(directory="nerpblog/app/static/dist/assets"))
-
-app.include_router(frontRouter)
+if admin_app:
+    app.mount('/admin', WSGIMiddleware(admin.app))
+if frontend_app:
+    app.mount("/assets/", StaticFiles(directory="nerpblog/app/static/dist/assets"))
+    app.include_router(frontRouter)
 app.include_router(apiRouter)
 app.include_router(mediaRouter) 
+
+
 
 
 # app.mount('/resource', StaticFiles(directory='nerpblog/app/static/dist/'))
