@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nerpblog post</title>
+</head>
+<body>
+    {% if post %}
+        <div class="title">{{ post.title }}</div>
+        <html class="post">{{ post.htmltext|safe }}</html>
+        {% if post.media%}
+            {% for img in post.media %}
+                <img src="/media/photo/{{img}}" alt="" style="max-width: 300px;">
+            {% endfor %}
+        {% endif %}
+        <div class="likes">Лайков: {{ post.likes }}</div>
+        <div class="date">Дата: {{ post.date }}</div>
+        <div class="username">нерпа_{{ post.username }}</div>
+        <a href="{{ post.botlink }}">Открыть в боте</a>
+    {% endif %}
+</body>
+</html>

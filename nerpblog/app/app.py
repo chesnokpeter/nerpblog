@@ -3,13 +3,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.wsgi import WSGIMiddleware
 
-from nerpblog.config import check_startup, frontend_app, admin_app
+from nerpblog.config import check_startup, frontend_app, admin_app, instant_view_app
 check_startup()
 
 from nerpblog.app.routing.api import apiRouter
 from nerpblog.app.routing.front import frontRouter
 from nerpblog.app.routing.media import mediaRouter
 from nerpblog.app.admin import admin
+from nerpblog.app.routing.iv import ivRouter
 
 
 app = FastAPI(title='nerpblog api')
@@ -36,6 +37,8 @@ if frontend_app:
     app.include_router(frontRouter)
 app.include_router(apiRouter)
 app.include_router(mediaRouter) 
+if instant_view_app:
+    app.include_router(ivRouter) 
 
 
 

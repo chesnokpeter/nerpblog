@@ -27,6 +27,7 @@ Also you can attach **media** in post and use **html markup**.
 - [ ] tg custom emoji
 - [ ] search indexing
 - [ ] tg bot on hooks
+- [ ] ssr
 ---
 ### install 
 #### docker:
