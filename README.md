@@ -2,8 +2,9 @@
 ## nerpblog is a open-source proj post publishing
 ### with deep integration via Telegram
 #### Open&Free&NoAds
-on the nerpblog you can see the posts, put a like, there is also a page of a particular post\
-**you can write a post using a telegram bot, and the markup inside the post message is saved**
+On **[nerp.blog](https://nerp.blog/)** you can publish posts, give likes, comment, the site is for browsing only.\
+Register an account, create posts, write comments, all this available **in telegram bot for protection and usability**.\
+Also you can attach **media** in post and use **html markup**.
 - vue js
 - vite
 - PWA
@@ -14,15 +15,18 @@ on the nerpblog you can see the posts, put a like, there is also a page of a par
 - postgresql
 - unit of work
 ### future features
-- [x] ~~photo in post~~
-- [x] ~~comments via tg bot~~
-- [x] ~~complete function tg bot~~
-- [x] ~~admin panel~~
+- [x] **photo in post**
+- [x] **comments via tg bot**
+- [x] **admin panel**
+- [x] **PWA**
+- [x] **docker container**
+- [x] ***deploy!***
 - [ ] tg instants view
+- [ ] complete logs and logs webview
+- [ ] native mobile client
 - [ ] tg custom emoji
-- [x] ~~complete PWA~~
-- [x] ~~docker container~~
-- [ ] ***deploy!***
+- [ ] search indexing
+- [ ] tg bot on hooks
 ---
 ### install 
 #### docker:

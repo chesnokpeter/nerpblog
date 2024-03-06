@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
 from fastapi.responses import FileResponse
 
-frontRouter = APIRouter(tags=['front'])
+frontRouter = APIRouter(tags=['front'], include_in_schema=False)
 
 templates = Jinja2Templates(directory="nerpblog/app/static/dist")
 dist = 'nerpblog/app/static/dist'
