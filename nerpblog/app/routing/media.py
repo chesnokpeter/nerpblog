@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 
 from aiogram import Bot, exceptions
 import io
@@ -19,3 +19,8 @@ async def getMedia(fileId: str):
         return StreamingResponse(io.BytesIO(f.read()))        
     except exceptions.TelegramBadRequest:
         return None
+
+
+@mediaRouter.get('/cover.png')
+async def getCover():
+    return FileResponse('nerpblog/public/cover.png')

@@ -6,9 +6,10 @@
     <title>nerpblog post</title>
 </head>
 <body>
+    <img src="/media/cover.png" alt="">
     {% if post %}
         <div class="title">{{ post.title }}</div>
-        <html class="post">{{ post.htmltext|safe }}</html>
+        <div class="post">{{ post.htmltext|safe }}</div>
         {% if post.media%}
             {% for img in post.media %}
                 <img src="/media/photo/{{img}}" alt="" style="max-width: 300px;">
