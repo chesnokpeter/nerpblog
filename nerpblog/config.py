@@ -18,7 +18,7 @@ bot_start_deeplink = 'start'
 
 frontend_app = True
 admin_app = True
-instant_view_app = True
+instant_view_app = False
 
 def check_startup():
     if not db_connect or not bot_token:
