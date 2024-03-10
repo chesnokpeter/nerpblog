@@ -18,8 +18,7 @@ app = FastAPI(title='nerpblog api')
 origins = [
     "http://localhost:9001",
     "http://localhost:9002",
-    "http://localhost:9003",
-    "*"
+    "http://localhost:9100"
 ]
 app.add_middleware(
     CORSMiddleware,

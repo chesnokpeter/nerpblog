@@ -50,7 +50,7 @@ class PostServices:
             if not r: return {}
             return r.to_scheme() 
     
-    async def add_post(self, data:AddPost):
+    async def add_post(self, data:AddPost) -> PostSchema:
         async with self.uow:
             u: USER = await self.uow.user.get_one(id=data.userid)
             if not u: return
@@ -97,6 +97,16 @@ class UserServices:
             u: USER = await self.uow.user.add(**data)
             await self.uow.commit()
             return u
+    
+    async def rename(self, tgid:int, newname:str) -> UserModel:
+        async with self.uow:
+            u: USER = await self.uow.user.get_one(tgid=tgid)
+            if not u: return
+            r: USER = await self.uow.user.update(u.id, name=newname)
+            await self.uow.commit()
+            if not r: return 
+            return r.to_scheme() 
+        
 
 
 # class UserServices:

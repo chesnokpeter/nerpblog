@@ -11,3 +11,6 @@ class Comment(StatesGroup):
 
 class Pagination(StatesGroup):
     page = State()
+
+class EditProfile(StatesGroup):
+    edit = State()
