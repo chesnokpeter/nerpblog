@@ -53,6 +53,9 @@
         gap: 10px;
         /* flex: 1 0 0; */
         /* align-self: stretch; */
+        @media (max-width: 400px) {
+            padding: 0 5px;
+        }
     }
     .sep {
         color: #fff;

@@ -133,6 +133,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .htmltext {
+        @media (max-width: 400px) {
+            padding: 0 5px;
+        }
+    }
     .commentShowText {
         margin-bottom: 5px;
         display: flex;

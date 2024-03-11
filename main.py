@@ -6,7 +6,7 @@ import sys
 from nerpblog.bot.bot import main as bot_run
 
 def server() -> None:
-    uvicorn.run('nerpblog:app', port=9001, host='0.0.0.0')
+    uvicorn.run('nerpblog:app', port=9100, host='0.0.0.0')
 
 def bot() -> None:
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
