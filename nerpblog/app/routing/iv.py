@@ -20,4 +20,5 @@ async def iv(request: Request, id: int, uow: uowdep):
         except ValueError:
             post.date = datetime.strptime(str(post.date), "%Y-%m-%d %H:%M:%S").strftime("%H:%MD%d.%m")
             post.htmltext = post.htmltext.replace("\n", "<br>")
+            print(post.htmltext)
     return templates.TemplateResponse('post.html', {"request": request , "post":post})
