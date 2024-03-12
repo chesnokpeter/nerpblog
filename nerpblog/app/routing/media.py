@@ -16,7 +16,7 @@ async def getMedia(fileId: str):
         async with  bot.context():  # or `bot.context()  bot.session`
             f = await bot.get_file(fileId)
             f = await bot.download_file(f.file_path)
-        return StreamingResponse(io.BytesIO(f.read()))        
+        return StreamingResponse(io.BytesIO(f.read()), media_type='image/png')       
     except exceptions.TelegramBadRequest:
         return None
 
