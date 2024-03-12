@@ -13,6 +13,8 @@ templates = Jinja2Templates(directory="nerpblog/app/routing/iv")
 
 @ivRouter.get('/{id}/iv')
 async def iv(request: Request, id: int, uow: uowdep):
+    print(request.headers)
+    print(request.client)
     post = await PostServices(uow).one_post(id=id)
     if post:
         try:
