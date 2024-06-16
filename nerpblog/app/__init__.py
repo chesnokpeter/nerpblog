@@ -1,1 +1,0 @@
-from nerpblog.app.app import app 
